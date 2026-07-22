@@ -1,0 +1,19 @@
+name: provenance
+
+on:
+  pull_request:
+
+jobs:
+  provenance:
+    runs-on: ${{ fromJSON(vars.CONTROL_TOWER_RUNS_ON || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Constraint provenance (Phase 17)
+        # Greenfield absence is valid before inception. A tracked constitution deleted in a PR
+        # is still blocked by the autonomy workflow (ADR-15's composed guard).
+        run: python framework/scripts/check_provenance.py --allow-missing-constitution

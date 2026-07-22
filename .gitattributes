@@ -1,0 +1,4 @@
+# Deterministic line endings (constraint NFR-DOCS-01)
+* text=auto eol=crlf
+*.py text eol=lf
+*.sh text eol=lf

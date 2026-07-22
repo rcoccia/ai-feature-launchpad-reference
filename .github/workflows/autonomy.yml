@@ -1,0 +1,17 @@
+name: autonomy
+
+on:
+  pull_request:
+
+jobs:
+  autonomy-gate:
+    runs-on: ${{ fromJSON(vars.CONTROL_TOWER_RUNS_ON || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Autonomy envelope (FUN-AUTONOMY-01)
+        run: python framework/scripts/check_autonomy.py --base "origin/${{ github.base_ref }}"

@@ -1,0 +1,23 @@
+name: merge
+
+on:
+  pull_request:
+
+# Green-gates-before-merge is enforced by GitHub branch protection. LIGHT installs docs,
+# autonomy, provenance, this merge-ready job, and product-native checks; Full can also
+# require evals, verify, regression, and agents. Branch protection is a repository setting,
+# not committable code; this job enforces the durable-review half (FUN-MERGE-01).
+jobs:
+  merge-ready:
+    runs-on: ${{ fromJSON(vars.CONTROL_TOWER_RUNS_ON || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Change Record contract (FUN-CHANGE-01)
+        run: python framework/scripts/check_change_record.py --base "origin/${{ github.base_ref }}"
+      - name: Governed merge (FUN-MERGE-01)
+        run: python framework/scripts/check_merge_ready.py --base "origin/${{ github.base_ref }}"
