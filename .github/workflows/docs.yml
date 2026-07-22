@@ -1,0 +1,23 @@
+name: docs
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  docs-gate:
+    runs-on: ${{ fromJSON(vars.CONTROL_TOWER_RUNS_ON || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: NFR-DOCS-01 documentation gate
+        run: python framework/scripts/check_docs.py
+      - name: Constitution readiness (deterministic, greenfield-tolerant)
+        run: |
+          if [ -f constitution/mission.md ]; then
+            python .github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness constitution
+          else
+            echo "No constitution/mission.md yet (pre-inception greenfield) — readiness gate skipped."
+          fi
