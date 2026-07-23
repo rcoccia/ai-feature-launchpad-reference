@@ -44,12 +44,8 @@ Do **not** write any file until the user has answered. This is the same anti-inv
 
 The **main Tower** writes the three files from confirmed human inputs, using this skill's assets
 (`mission.md`, `constraints.md`, `roadmap.md`). Keep them strategy-level: a complete Mission (all
-five sections), the five inherited Control Tower baseline constraints already present in the asset,
-a few elicited product laws/boundaries/invariants (roughly 3–6 is usually enough to start), and a
-roadmap whose **first current phase is small and bounded**. The inherited baseline does not count
-toward the product guidance: it makes the installed Change Record, Roadmap, docs, merge, and
-conditional architecture-review kernel locally resolvable. Preserve those exact IDs and complete
-blocks; do not aggregate or alias them into a product governance constraint. Author canonical
+five sections), a few active cross-slice laws/boundaries/invariants (roughly 3–6 is usually enough
+to start), and a roadmap whose **first current phase is small and bounded**. Author canonical
 `## Phase` sections with a non-empty Goal and top-level capability checkboxes. All checked means
 delivered; the first non-deferred phase with any unchecked item is current, including partial work;
 later eligible phases are planned. `**Status:** deferred` is optional human-governed strategy, never
@@ -66,9 +62,7 @@ design decision for `architecture-review`/ADR, not a constraint). See the templa
 non meccanismo"* note. Also declare provenance with the template's inline-JSON fields: a non-empty
 `source`; a pinned local `reference` for every non-stakeholder authority; and, for every hard
 constraint, a tracked gate `projection` or a review-routed `residual`. The gate proves
-structure/local reproducibility, not source authenticity or semantic adequacy. The inherited
-baseline already pins copied local method surfaces; product constraints retain their own elicited or
-Authority provenance.
+structure/local reproducibility, not source authenticity or semantic adequacy.
 
 ### 4. Validate the shape (deterministic)
 
@@ -101,8 +95,7 @@ do not silently add policy or claim compliance.
 - **Deterministic checks belong in the script, not this prose** (tenet 3): shape validation is `scaffold_constitution.py --check`. Do not restate or re-implement it conversationally.
 - **Domain-agnostic** (TEC-DOMAIN-01): never hardcode a domain, workspace, or platform name in this skill or the script.
 - **Authority absence is meaningful:** do not invent a baseline policy when no external Authority is
-  declared; use the stakeholder constraints that were actually elicited. This does not remove the
-  inherited Control Tower method baseline required by the installed kernel.
+  declared; use the stakeholder constraints that were actually elicited.
 - **Shape-check is not the gate:** passing `--check` proves form, not coherence. Do not imply an all-clear; the readiness gate is separate.
 - **Deferral is never automatic:** the script validates and skips explicit `deferred` status, but a
   human decides whether that status is intended, authorized, and still appropriate.

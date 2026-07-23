@@ -97,7 +97,7 @@ constraint:
 ## Inherited Control Tower governance
 
 The existing product `NFR-DOCS-01` also satisfies the installed kernel's documentation baseline.
-The following four inherited method laws complete the exact portable baseline without duplicating
+The following five inherited method laws complete the exact portable baseline without duplicating
 that product constraint.
 
 ```yaml
@@ -107,7 +107,7 @@ constraint:
   statement: "Every governed change has exactly one confirmed dated Change Record before implementation, with explicit outcome, Roadmap anchor, activated obligations, evidence, corrections, closeout, and the actual independent final verdict."
   rationale: "The installed Change Record kernel requires this exact locally resolvable obligation."
   source: ["normative_spec"]
-  reference: [{"source":"normative_spec","id":"Control-Tower-Change-Record-Contract","version":"kernel-2026-07-23","path":"framework/contracts/change-record.md","sha256":"34870d2f7e612dde8c24724db4b48c39149debc7129755c755c4187069c2b779"}]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Change-Record-Contract","version":"kernel-2026-07-23","path":"framework/contracts/change-record.md","sha256":"26a4d6b94c96728b2af56fe56c6dcc18f3f575eac0fa84b861650eead282c1c6"}]
   applies_to: [planning, design, coding]
   verification: "framework/scripts/check_change_record.py validates the one-record branch contract; independent review judges obligation completeness and genuine confirmation"
   projection: ["framework/scripts/check_change_record.py"]
@@ -160,6 +160,22 @@ constraint:
   verification: ".github/skills/architecture-review/scripts/check_architecture.py validates challengeable form; independent review judges the trigger and design"
   projection: [".github/skills/architecture-review/scripts/check_architecture.py"]
   residual: [{"id":"FUN-ARCHREVIEW-01::semantic-challenge","statement":"Review confirms the trigger is genuinely load-bearing and the blindfolded challenge is independent and substantive.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: FUN-AUTONOMY-01
+  category: functional
+  statement: "A change to constitution/mission.md or constitution/constraints.md requires a recorded human-authorized ADR under constitution/decisions; Roadmap lifecycle movement does not activate this obligation."
+  rationale: "The first governed strategy correction must resolve the exact constraint required by the installed autonomy and Change Record gates."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Autonomy-Gate","version":"kernel-2026-07-23","path":"framework/scripts/check_autonomy.py","sha256":"e577e4b7b5f623c3106920ce4593eca5df6a9a0bf8dbf20423786aff375f25b7"}]
+  applies_to: [design]
+  verification: "framework/scripts/check_autonomy.py requires a new ADR for Mission or Constraints changes; independent review judges genuine human authorization"
+  projection: ["framework/scripts/check_autonomy.py"]
+  residual: [{"id":"FUN-AUTONOMY-01::human-authorization","statement":"Review confirms the strategic decision recorded by the ADR was genuinely authorized by the human.","route":"review"}]
   severity: hard
   status: active
 ```

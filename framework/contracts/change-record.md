@@ -56,10 +56,16 @@ Add this section only when a named load-bearing trigger requires the sibling
 
 Add this section only for triggered architecture and record the actual returned result after return.
 
-Before final review, add a second-level `Closeout` section with a
-`Disposition | Record` table containing exactly `delivered`, `remaining`, `discovered`, and
-`evidence` rows. Do not add the section while those records are still placeholders: confirmed work
-may remain incomplete, while reviewable work must carry concrete closeout.
+## Closeout
+
+Add before final review:
+
+| Disposition | Record |
+|---|---|
+| delivered | <scope-preserving delivered outcome> |
+| remaining | <approved remaining outcome or explicit none> |
+| discovered | <evidence-backed discovery or explicit none> |
+| evidence | <Roadmap/changelog evidence> |
 
 ## Independent final review
 

@@ -1,13 +1,12 @@
 """Scaffold and validate a three-file constitution directory.
 
-The default mode copies missing constitution templates into a target
-constitution folder. The check mode validates that the target files have the
-required Markdown shape and constraint metadata blocks. The readiness mode
-runs the shape check plus extra inception-readiness sub-checks: the portable
-method baseline IDs are present, every hard constraint carries a verification,
-every Roadmap phase is valid and a current phase exists, and the Mission
-Success section is non-empty. Current-phase mode prints the selected canonical
-Roadmap heading.
+The default mode copies missing constitution templates into a target specs
+folder. The check mode validates that the target files have the required
+markdown shape and constraint metadata blocks. The readiness mode runs the
+shape check plus extra inception-readiness sub-checks: every hard constraint
+carries a verification, every roadmap phase is valid and a current phase
+exists, and the mission Success section is non-empty. Current-phase mode
+prints the selected canonical Roadmap heading.
 """
 
 from __future__ import annotations
@@ -43,13 +42,6 @@ SECTION_HEADING = re.compile(r"^#{1,2}(?!#)\s+")
 GOAL_FIELD = re.compile(r"^\s*(?:Goal:|\*\*Goal:\*\*)\s*(.*?)\s*$", re.IGNORECASE)
 STATUS_FIELD = re.compile(r"^\s*\*\*Status:\*\*\s*(.*?)\s*$")
 CHECKBOX_ITEM = re.compile(r"^- \[([ xX])\]\s+(\S.*)$")
-REQUIRED_PORTABLE_CONSTRAINT_IDS = (
-    "FUN-CHANGE-01",
-    "FUN-ROADMAP-01",
-    "NFR-DOCS-01",
-    "FUN-MERGE-01",
-    "FUN-ARCHREVIEW-01",
-)
 
 
 class ToolError(Exception):
@@ -439,30 +431,15 @@ def check(specs_dir: Path) -> int:
 
 
 def readiness_constraints(path: Path) -> list[str]:
-    """Require the portable method baseline and hard-constraint verification."""
+    """Every hard constraint must carry a non-empty verification."""
     text = read_text_file(path)
     blocks, _ = yaml_blocks(text)
     errors: list[str] = []
-    constraint_ids: set[str] = set()
     for index, (start_line, lines) in enumerate(blocks, start=1):
         values = parse_constraint_block(lines)
         name = values.get("id") or f"block {index} at line {start_line}"
-        if values.get("id"):
-            constraint_ids.add(values["id"])
         if values.get("severity") == "hard" and not values.get("verification", "").strip():
             errors.append(f"{path}: constraint {name}: hard constraint has no non-empty 'verification'")
-    missing = [
-        constraint_id
-        for constraint_id in REQUIRED_PORTABLE_CONSTRAINT_IDS
-        if constraint_id not in constraint_ids
-    ]
-    if missing:
-        errors.append(
-            f"{path}: missing portable Control Tower baseline constraint id(s): "
-            f"{', '.join(missing)}; copy the inherited baseline blocks from "
-            ".github/skills/bootstrap-tower/assets/constraints.md and keep product "
-            "constraints separate"
-        )
     return errors
 
 

@@ -8,9 +8,9 @@ roadmap: "Phase 1: Govern one AI-feature launch request"
 
 ## Intent and first human confirmation
 
-**Observable outcome:** the refreshed LIGHT kernel and product constitution expose the exact five
-portable Control Tower baseline IDs, with locally resolvable normative pins, so deterministic
-readiness and the first product Change Record no longer fail on the aggregate `FUN-GOV-01`.
+**Observable outcome:** the product constitution on its original `eef6851`-pinned LIGHT kit exposes
+the exact six portable Control Tower baseline IDs with locally resolvable normative pins, so the
+first product Change Record no longer fails on aggregate `FUN-GOV-01`.
 
 **Initial human confirmation:** `confirmed on 2026-07-23 by explicit delegated human command`
 
@@ -54,6 +54,7 @@ This records an attestation of the command; it does not authenticate identity.
 | `FUN-ROADMAP-01` | The correction preserves the exact current Phase 1 anchor without changing Roadmap semantics. | Readiness passes and the selector returns exact Phase 1. | pending |
 | `NFR-DOCS-01` | The refresh and correction modify tracked Markdown. | Documentation gate reports UTF-8 without BOM, CRLF, and balanced fences. | pending |
 | `FUN-MERGE-01` | The branch must stop before parent-owned final review and merge. | Review pre-check passes; merge readiness blocks on confirmed status and pending verdict. | pending |
+| `FUN-AUTONOMY-01` | The active Constraints set changes under an explicitly delegated human decision. | The autonomy gate passes because ADR-02 records the strategy correction. | pending |
 
 ## Short implementation plan
 
@@ -79,9 +80,23 @@ This records an attestation of the command; it does not authenticate identity.
 
 - **Governance/strategy correction:** exact inherited constraint IDs replace the aggregate
   `FUN-GOV-01`; the source pin, active constraint set, and durable decision are corrected upstream.
-- The bootstrap refresh necessarily preceded creation of a gate-resolvable Change Record because the
-  field finding was precisely that the prior constitution lacked the exact installed-kernel IDs.
-  The explicit delegated command authorized this bounded pre-feature correction.
+- **Correction cycle 1:** commit `d7c57220b5bd4850672a95d68426ad2c795974cb` attempted the
+  originally confirmed 56-file refresh from external method commit `ff77efa7d7983b2eabde9baccf1d35e38c4692fb`.
+  The Change Record gate exposed second-order method-development obligations because the product
+  branch then changed method-owned Python and framework paths. The parent selected the wider upstream
+  boundary rather than adding decorative product constraints or weakening the gate.
+- External method commit `08c481f5afaf2c8ae196812c00f003b10190bda3` completed the six-ID
+  portable model. This product branch adopts only the locally pinned `FUN-AUTONOMY-01` definition.
+  A normal follow-up corrective commit restores these eight refresh-only paths exactly to
+  `origin/main`: `.github/skills/bootstrap-tower/SKILL.md`,
+  `.github/skills/bootstrap-tower/assets/constraints.md`,
+  `.github/skills/bootstrap-tower/scripts/scaffold_constitution.py`,
+  `.github/skills/inception-readiness/SKILL.md`, `framework/contracts/change-record.md`,
+  `framework/docs/how-to/govern-inception.md`, `framework/docs/reference/constraints.md`, and
+  `framework/docs/reference/gates.md`.
+- The original confirmed Scope and Short implementation plan remain above as the historical first
+  plan. This append-only correction records why the refresh step was reversed and why the observable
+  product outcome is now achieved without installing either external method correction.
 - No prior product Change Record, architecture review, implementation evidence, or final review
   existed to invalidate. Mission, Roadmap semantics, and product laws other than removal of the
   redundant governance aggregate remain unchanged.
