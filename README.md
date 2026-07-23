@@ -15,6 +15,23 @@ The product is intentionally narrow:
 - integration tests and product-owned GitHub Actions CI;
 - no workflow engine, risk scoring, provider abstraction, cloud deployment, or production identity.
 
+## Choose a path
+
+- **Run the finished reference:** continue with [Run locally](#run-locally), then use the
+  [API contract](docs/api.md) and [trusted-header boundary](docs/trust-boundary.md).
+- **Reconstruct it from zero:** follow the
+  [fresh-context tutorial](docs/from-zero-replay.md), then use the
+  [operational replay checklist](docs/replay-operations.md).
+- **Understand the proof:** read the
+  [evidence chain](docs/evidence-chain.md) from Mission through merged PR evidence.
+
+The replay starts in an empty disposable local Git repository. Its method source and instructions
+come from public branch `refs/heads/rcoccia-phase2-replay-docs` in
+`https://github.com/rcoccia/ai-feature-launchpad-reference`; merged feature baseline
+`0a700178269acdf284c14c9033577857357c3dd3` remains the fixed product reference. The disposable
+Roadmap reproduces both confirmed phases: Phase 1 is delivered locally, then Phase 2 becomes current
+and stays unchecked because the replay report is external evidence rather than a second local slice.
+
 ## Run locally
 
 Prerequisites:
@@ -73,7 +90,11 @@ X-Reference-Authentication-Warning: NON-PRODUCTION; caller-supplied headers are 
 
 - [API contract](docs/api.md)
 - [Trusted-header boundary](docs/trust-boundary.md)
+- [From-zero replay tutorial](docs/from-zero-replay.md)
+- [Operational replay checklist](docs/replay-operations.md)
+- [Fresh-context replay evidence](docs/replay-evidence.md)
+- [Intent-to-merge evidence chain](docs/evidence-chain.md)
 - [Canonical governed change](changes/2026-07-23-govern-ai-feature-launch.md)
 
-The later fresh-context replay is a separate Roadmap phase. This product documentation delivers the
-feature surface; it does not perform or prewrite that replay.
+Fresh-context replay evidence succeeded. Phase 2 intentionally remains current and unchecked pending
+separate human-authorized adoption of the promoted `Lifecycle: complete` contract.
