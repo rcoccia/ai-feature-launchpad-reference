@@ -179,4 +179,86 @@ This records an attestation of the command; it does not authenticate identity.
 
 ## Independent final review
 
-**Returned verdict:** `pending`
+**Returned verdict:** `BLOCK`
+
+### Attempt 1
+
+**Reviewer/date:** Reviewer Agent, 2026-07-23
+
+**Reviewed target:** `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7`
+
+**Remote:** `origin`
+
+**Ref:** `refs/heads/rcoccia-phase2-replay-docs` (PR 5)
+
+**Start local head:** `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7`
+
+**Start remote head:** `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7`
+
+**Completion local head:** `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7`
+
+**Completion remote head:** `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7`
+
+**Stability:** `STABLE`
+
+**Returned verdict:** `BLOCK`
+
+**Gates:** PASS: Change Record gate, review pre-check, documentation gate for 58 tracked Markdown
+files, constitution readiness with exact current Phase 2, autonomy, provenance for 10 active
+constraints, locked restore, zero-warning/error Release build, 28 integration tests, vulnerability
+scan with no vulnerable packages, product CI run `30041807217`, and diff/cache hygiene. Merge
+readiness expectedly remained blocked on confirmed status and final verdict `PENDING` before this
+actual return was recorded.
+
+**Evidence:** The reviewed target was exact, clean, and stable across local HEAD, local origin, and
+remote. Replay target `9c12fb06ce3f6589fee7183fdcdd49a15df602cf` proved the public source sequence
+`a29b507bd435f3128ad637c312aaf23ce947ca8d` ->
+`c77afc2cd745e86f3a6ef8e652a30da1f10e57a8` ->
+`3796075cdddbf5358f4ba3e0659aca81af83a1b8` reproducible through review-ready without
+copying product source or tests. Product, architecture, constitution, Roadmap, kit, and the known
+separately governed lifecycle-adoption remainder were unchanged.
+
+**Summary:** `FUN-ROADMAP-01` and `NFR-DOCS-01` are blocked by two stale current-state sentences.
+The other eight activated obligations pass. Correct only README lines 99-100 and
+`docs/evidence-chain.md` line 11 so successful replay evidence and intentional partial closeout are
+described consistently; retain the separate terminal lifecycle-adoption remainder and add no scope.
+
+**Findings:**
+
+1. README lines 99-100 say Phase 2 remains unchecked until a successful replay is recorded, but
+   `docs/replay-evidence.md` and this record now document that successful replay. The sentence must
+   state that replay evidence succeeded and Phase 2 intentionally remains current and unchecked
+   pending separately governed `Lifecycle: complete` adoption.
+2. `docs/evidence-chain.md` line 11 says Phase 2 remains open until a fresh replay succeeds. That is
+   now stale for the same reason and requires the same two-part current-state wording.
+
+**Reviewer notes:** Modify only those two public wording surfaces and append the correction/evidence
+to this record. Do not change Roadmap, product, kit, constitution, terminal marker, Phase 3, replay
+evidence semantics, design, or the separately governed remaining outcome. Obtain a fresh independent
+final review after the corrected target is frozen.
+
+| Obligation | Review result | Notes |
+|---|---|---|
+| `FUN-CHANGE-01` | pass | The confirmed canonical record preserves planning, replay evidence, closeout, and this actual review attempt. |
+| `FUN-ROADMAP-01` | BLOCK | Current-state wording must distinguish successful replay evidence from the still-unchecked Phase 2 pending lifecycle-contract adoption. |
+| `NFR-DOCS-01` | BLOCK | README and evidence-chain wording contradict the successful replay evidence and intentional partial closeout. |
+| `FUN-MERGE-01` | pass | The exact stable target received this actual BLOCK; final review and human merge remain separate. |
+| `FUN-ARCHREVIEW-01` | pass | PR5 introduces no load-bearing design; replay architecture correction and fresh SOUND remain evidenced. |
+| `FUN-AUTONOMY-01` | pass | Mission, Constraints, and Roadmap remain unchanged. |
+| `TEC-STK-01` | pass | Product build and approved .NET 10/SQLite surface remain unchanged and green. |
+| `TEC-IDB-01` | pass | The non-production trusted-header boundary remains explicit and unchanged. |
+| `FUN-APR-01` | pass | All 28 product integration tests and replay contract evidence remain green. |
+| `NFR-CI-01` | pass | Product CI run `30041807217` passed on the reviewed target. |
+
+| Residual | Disposition | Notes |
+|---|---|---|
+| `FUN-CHANGE-01::obligation-completeness-and-confirmation` | covered | The one confirmed record preserves the complete append-only evidence, correction, closeout, and review chain. |
+| `FUN-ROADMAP-01::deferral-intent` | follow-up | Correct stale wording now; separate human-authorized `Lifecycle: complete` adoption remains the explicit known terminal remainder. |
+| `NFR-DOCS-01::didactic-quality` | follow-up | Make README and evidence-chain current-state language agree with successful replay and intentional partial closeout. |
+| `FUN-MERGE-01::review-genuineness` | covered | The no-edit review returned STABLE/BLOCK for the exact frozen pushed target; no merge authorization is claimed. |
+| `FUN-ARCHREVIEW-01::semantic-challenge` | covered | No PR5 architecture trigger exists; the replay's corrected design received a fresh SOUND. |
+| `FUN-AUTONOMY-01::human-authorization` | covered | No Mission, Constraints, or Roadmap change is present. |
+| `TEC-STK-01::approved-surface` | covered | The unchanged product remains one .NET 10 Minimal API using direct file-backed SQLite. |
+| `TEC-IDB-01::boundary-clarity` | covered | Public docs and tests keep trusted headers conspicuously non-production. |
+| `FUN-APR-01::governance-consistency` | covered | Replay evidence and all 28 tests cover the approved lifecycle and nested request/audit contract. |
+| `NFR-CI-01::product-evidence` | covered | Product CI run `30041807217` passed; wording correction requires no product change. |
