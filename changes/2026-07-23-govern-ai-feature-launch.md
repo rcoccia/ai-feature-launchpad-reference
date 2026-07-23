@@ -113,7 +113,12 @@ This records an attestation of the command; it does not authenticate identity.
 
 ## Corrections
 
-`pending`
+- **Post-design context synchronization:** merge commit
+  `d03873cd24525a7e618f37421616f07bea92611b` incorporated human-authorized ADR-03 and planned Phase 2 from
+  `3d5714ab5d09f108d2d08cd5688c9408f7b8477f` after the architecture design and review. The added
+  phase prevents Roadmap exhaustion after this feature is delivered. Exact Phase 1 remains current
+  and unchanged; the observable outcome, active constraints, product design, dependencies, and
+  implementation plan do not change. The prior stable architecture `SOUND` remains applicable.
 
 ## Architecture
 
