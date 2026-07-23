@@ -75,6 +75,12 @@ This records an attestation of the command; it does not authenticate identity.
 | `FUN-ROADMAP-01` | pending | Readiness and exact current-phase selection have not yet been recorded. |
 | `NFR-DOCS-01` | pending | Documentation byte/structure evidence has not yet been recorded. |
 | `FUN-MERGE-01` | pending | Review pre-check and expected merge-ready boundary have not yet been recorded. |
+| `FUN-AUTONOMY-01` | pending | Autonomy evidence has not yet been recorded. |
+| `FUN-CHANGE-01` | pass | On corrective commit `01c6e10407c2174ee024726dff0cb9ec4bc1ebc1`, `python -B framework/scripts/check_change_record.py --base origin/main` passed with exactly this one dated record; the net branch diff contains no framework or `specs/` path. |
+| `FUN-ROADMAP-01` | pass | Pinned readiness passed and `--current-phase` returned exact `Phase 1: Govern one AI-feature launch request`. The pinned `eef6851` readiness version predates six-ID enforcement, so this is shape/current-phase evidence rather than proof of the new baseline count. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passed all tracked Markdown after CRLF/no-BOM normalization, including the deterministic changelog and closeout record. |
+| `FUN-MERGE-01` | pass | The completed confirmed record passes the review pre-check; merge readiness intentionally blocks only on `status: confirmed` and final verdict `PENDING`. |
+| `FUN-AUTONOMY-01` | pass | `python -B framework/scripts/check_autonomy.py --base origin/main` passed because ADR-02 records the delegated Constraints decision without claiming identity. |
 
 ## Corrections
 
@@ -87,7 +93,8 @@ This records an attestation of the command; it does not authenticate identity.
   boundary rather than adding decorative product constraints or weakening the gate.
 - External method commit `08c481f5afaf2c8ae196812c00f003b10190bda3` completed the six-ID
   portable model. This product branch adopts only the locally pinned `FUN-AUTONOMY-01` definition.
-  A normal follow-up corrective commit restores these eight refresh-only paths exactly to
+  Normal follow-up commit `01c6e10407c2174ee024726dff0cb9ec4bc1ebc1` restores these eight
+  refresh-only paths exactly to
   `origin/main`: `.github/skills/bootstrap-tower/SKILL.md`,
   `.github/skills/bootstrap-tower/assets/constraints.md`,
   `.github/skills/bootstrap-tower/scripts/scaffold_constitution.py`,
@@ -100,6 +107,15 @@ This records an attestation of the command; it does not authenticate identity.
 - No prior product Change Record, architecture review, implementation evidence, or final review
   existed to invalidate. Mission, Roadmap semantics, and product laws other than removal of the
   redundant governance aggregate remain unchanged.
+
+## Closeout
+
+| Disposition | Record |
+|---|---|
+| delivered | The active constitution now has the six exact portable baseline IDs and four other unchanged product laws, removes aggregate `FUN-GOV-01`, pins every inherited definition to a locally present `eef6851`-kit surface, and preserves the original 56-file kit byte-for-byte. |
+| remaining | Independent semantic readiness, independent final review, returned-verdict recording, transition to reviewed, merge-ready success, and human merge authorization remain intentionally pending. Phase 1 product capability remains wholly undelivered and unchecked. |
+| discovered | The attempted `ff77efa` refresh activated method-development obligations through changed framework paths; upstream method commits `ff77efa7d7983b2eabde9baccf1d35e38c4692fb` and `08c481f5afaf2c8ae196812c00f003b10190bda3` corrected the portable model, while this adopter retained its original kit boundary. |
+| evidence | The net branch diff is `CHANGELOG.md`, this Change Record, `constitution/constraints.md`, and ADR-02. Changelog history is deterministic through corrective commit `01c6e10407c2174ee024726dff0cb9ec4bc1ebc1`; no Roadmap delta is applied because this governance correction does not deliver Phase 1 product scope. |
 
 ## Independent final review
 
