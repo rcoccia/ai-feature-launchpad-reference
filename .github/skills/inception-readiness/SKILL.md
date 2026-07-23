@@ -22,12 +22,13 @@ From the repo root:
 
 `python .github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness constitution`
 
-It must exit 0 — shape is valid **and** every hard constraint carries a `verification`, every
-canonical Roadmap phase (including deferred history) has a non-empty Goal and valid top-level item,
-the first non-deferred phase with an unchecked item is selectable, and the mission Success section
-is non-empty. Delivered phases are skipped; a partial phase remains current; an exhausted Roadmap
-blocks for re-cadence. If it fails, **BLOCK**: name the artifact to fix; do not judge coherence on a
-malformed constitution.
+It must exit 0 — shape is valid **and** the constitution contains the exact inherited baseline IDs
+`FUN-CHANGE-01`, `FUN-ROADMAP-01`, `NFR-DOCS-01`, `FUN-MERGE-01`, and
+`FUN-ARCHREVIEW-01`; every hard constraint carries a `verification`; every canonical Roadmap phase
+(including deferred history) has a non-empty Goal and valid top-level item; the first non-deferred
+phase with an unchecked item is selectable; and the mission Success section is non-empty. Delivered
+phases are skipped; a partial phase remains current; an exhausted Roadmap blocks for re-cadence. If
+it fails, **BLOCK**: name the artifact to fix; do not judge coherence on a malformed constitution.
 
 ### 2. Apply the semantic checklist (judgment)
 
@@ -38,7 +39,7 @@ With the deterministic gate green, judge coherence:
 | Traceability | does each mission Success criterion map to at least one roadmap phase? |
 | First phase bounded | is Phase 1 one focused session, with no dependency on a later phase? |
 | Scope vs non-goals | is anything both in scope and a non-goal? |
-| Constraint coverage | do the constraints cover the stack/qualities the mission implies (no glaring gap)? |
+| Product constraint coverage | beyond the inherited method baseline, do elicited constraints cover the stack/qualities the mission implies (no glaring gap)? |
 | No orphan phase | does every roadmap phase advance the mission? |
 | Deferral intent | is every explicit `**Status:** deferred` human-authorized and still appropriate? |
 | THIN proportionality | are constraints cross-slice laws/boundaries/invariants and roadmap phases capabilities, with detailed behavior deferred to slice EARS? Block a feature catalogue, endpoint/test flow, or unselected architecture embedded in strategy. |
@@ -62,7 +63,8 @@ Run **independently** of whoever produced the constitution. The `reviewer-agent`
 - **Producer ≠ judge:** do not run this on a constitution you just authored yourself in the same breath; hand it to an independent reviewer.
 - **No teaching-to-test:** never weaken a check to force a PASS.
 - **No numeric proxy for judgment:** THIN proportionality is semantic review, not a maximum
-  constraint count or constitution-length gate.
+  constraint count or constitution-length gate. The five inherited method constraints are kernel
+  obligations, not product-scope inflation.
 - **Status syntax is not intent:** the deterministic gate can validate `deferred`; only human
   strategy and independent judgment can establish whether deferral is wise or current.
 - **Domain-agnostic** (TEC-DOMAIN-01): no hardcoded domain names.

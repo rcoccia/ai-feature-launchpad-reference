@@ -96,18 +96,70 @@ constraint:
 
 ## Inherited Control Tower governance
 
+The existing product `NFR-DOCS-01` also satisfies the installed kernel's documentation baseline.
+The following four inherited method laws complete the exact portable baseline without duplicating
+that product constraint.
+
 ```yaml
 constraint:
-  id: FUN-GOV-01
+  id: FUN-CHANGE-01
   category: functional
-  statement: "The adopted Control Tower LIGHT lifecycle remains binding: constitution changes require recorded human decisions, constraint provenance is reproducible, current-phase selection is deterministic, and implementation may merge only through the canonical governed evidence path."
-  rationale: "The reference proves the Control Tower method only if its inherited hard governance remains active rather than advisory."
-  source: ["stakeholder"]
-  reference: []
-  applies_to: [requirements, design, planning, coding]
-  verification: "Run the inherited readiness/current-phase, autonomy, provenance, and governed-merge gates at their documented lifecycle boundaries, with independent review where judgment is required."
-  projection: [".github/skills/bootstrap-tower/scripts/scaffold_constitution.py","framework/scripts/check_autonomy.py","framework/scripts/check_provenance.py","framework/scripts/check_merge_ready.py"]
-  residual: [{"id":"FUN-GOV-01::governance-application","statement":"Confirm required independent judgments and lifecycle gates were applied without weakening or bypass.","route":"review"}]
+  statement: "Every governed change has exactly one confirmed dated Change Record before implementation, with explicit outcome, Roadmap anchor, activated obligations, evidence, corrections, closeout, and the actual independent final verdict."
+  rationale: "The installed Change Record kernel requires this exact locally resolvable obligation."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Change-Record-Contract","version":"kernel-2026-07-23","path":"framework/contracts/change-record.md","sha256":"34870d2f7e612dde8c24724db4b48c39149debc7129755c755c4187069c2b779"}]
+  applies_to: [planning, design, coding]
+  verification: "framework/scripts/check_change_record.py validates the one-record branch contract; independent review judges obligation completeness and genuine confirmation"
+  projection: ["framework/scripts/check_change_record.py"]
+  residual: [{"id":"FUN-CHANGE-01::obligation-completeness-and-confirmation","statement":"Review and the human confirm that no material obligation was omitted and the initial confirmation was genuine.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: FUN-ROADMAP-01
+  category: functional
+  statement: "The Roadmap uses canonical Phase sections: fully checked phases are delivered, the first non-deferred phase with an unchecked item is current, later eligible phases are planned, explicit deferred status is skipped, and exhaustion blocks for human re-cadence."
+  rationale: "Readiness and planning must consume one canonical lifecycle selector."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Operating-Model","version":"kernel-2026-07-23","path":"framework/doctrine/operating-model.md","sha256":"86fe07558f908d3ecad9abe281ce3a0e3b8a7aad63cd7c21c85b8044485eb797"}]
+  applies_to: [planning, design, coding]
+  verification: ".github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness/--current-phase validates and selects canonical Roadmap state"
+  projection: [".github/skills/bootstrap-tower/scripts/scaffold_constitution.py"]
+  residual: [{"id":"FUN-ROADMAP-01::deferral-intent","statement":"Review confirms every deferral is human-authorized and still appropriate.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: FUN-MERGE-01
+  category: functional
+  statement: "Every PR records the actual verdict from an independent final no-edit review on a frozen pushed target, satisfies merge readiness, and stops for human merge authorization."
+  rationale: "The installed merge kernel preserves producer-judge separation and the human merge boundary."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Merge-Ready-Gate","version":"kernel-2026-07-23","path":"framework/scripts/check_merge_ready.py","sha256":"588759968c5493d5a79e374fccfd373e187781103d9bd1e0519c9719b3548925"}]
+  applies_to: [design, coding]
+  verification: "framework/scripts/check_merge_ready.py requires reviewed state, latest STABLE/PROMOTE, complete evidence and closeout, and residual dispositions"
+  projection: ["framework/scripts/check_merge_ready.py"]
+  residual: [{"id":"FUN-MERGE-01::review-genuineness","statement":"Review and the human confirm single-producer ownership, target stability, independent judgment, and faithful recording of the returned verdict.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: FUN-ARCHREVIEW-01
+  category: functional
+  statement: "When a change introduces a load-bearing design decision, an independent blindfolded architecture challenge returns SOUND before coding; ordinary changes do not activate this obligation."
+  rationale: "A future architecture-triggered Change Record must resolve the exact constraint required by the installed conditional gate."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Architecture-Review-Skill","version":"kernel-2026-07-23","path":".github/skills/architecture-review/SKILL.md","sha256":"bdc295bc8014172fed1ca9f7ecb6f9c9bb4cf27d626fab34a3881a85176f3005"}]
+  applies_to: [design]
+  verification: ".github/skills/architecture-review/scripts/check_architecture.py validates challengeable form; independent review judges the trigger and design"
+  projection: [".github/skills/architecture-review/scripts/check_architecture.py"]
+  residual: [{"id":"FUN-ARCHREVIEW-01::semantic-challenge","statement":"Review confirms the trigger is genuinely load-bearing and the blindfolded challenge is independent and substantive.","route":"review"}]
   severity: hard
   status: active
 ```

@@ -25,8 +25,12 @@ into three areas, and waits for your answers *before* the **main Tower** writes 
 
 The output is **THIN strategy**, not a disguised delivery slice:
 
+- **Inherited method constraints** are the five exact portable kernel laws already supplied by the
+  Constraints asset: Change Record, Roadmap, docs, merge, and conditional architecture review. Keep
+  their IDs and locally pinned references; do not replace them with an aggregate governance alias.
 - **Constraints** are cross-slice laws, boundaries, and invariants. They are not a catalogue of
-  endpoints, status codes, feature flows, or test cases.
+  endpoints, status codes, feature flows, or test cases. Roughly 3-6 elicited product constraints
+  are usually enough to start; the inherited baseline is separate from that guidance.
 - **Roadmap phases** are capabilities. Their detailed confirmed behavior becomes EARS only after
   readiness, in the selected slice.
 - A missing technical design stays an open question or roadmap capability. The bootstrap does not
@@ -61,7 +65,8 @@ the Roadmap is exhausted and the check blocks for re-cadence.
 
 Shape is necessary, not sufficient: a well-formed constitution can still be incoherent. Hand it
 to [`inception-readiness`](../reference/skills.md), run **independently** by the `reviewer-agent`
-(producer != judge). It runs the deterministic readiness check plus a semantic checklist:
+(producer != judge). It first blocks if any of the five exact portable baseline IDs is absent, then
+runs the remaining deterministic checks plus a semantic checklist:
 
 - does each mission **Success** criterion map to a roadmap phase?
 - is **Phase 1** one bounded, self-contained session?

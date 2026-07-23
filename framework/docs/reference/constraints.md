@@ -2,8 +2,23 @@
 
 A project's normative constraints live in
 [`constitution/constraints.md`](../../../constitution/constraints.md) after inception. This page
-explains the contract; it does not prescribe the method repository's own constraint IDs to an
-adopter.
+explains the contract. Every adopter constitution includes five portable Control Tower baseline
+constraints required by the installed kernel, plus its own elicited product constraints.
+
+## Portable inherited baseline
+
+| Constraint | Why it is always present |
+|---|---|
+| `FUN-CHANGE-01` | Every governed change needs the canonical dated Change Record contract. |
+| `FUN-ROADMAP-01` | Readiness and planning share the canonical Roadmap selector. |
+| `NFR-DOCS-01` | Tracked Markdown must satisfy the installed documentation gate. |
+| `FUN-MERGE-01` | Every PR retains independent final review and human merge authorization. |
+| `FUN-ARCHREVIEW-01` | A later load-bearing design must be able to activate the installed architecture path without inventing or aliasing a constraint ID. |
+
+These are method laws, not product features, so they do not count toward the rough 3-6 elicited
+product constraints used as THIN inception guidance. Their complete blocks live in the bootstrap
+Constraints asset and pin copied local method surfaces. `FUN-ARCHREVIEW-01` is present in every
+constitution but becomes a Change Record proof obligation only when architecture is triggered.
 
 ## What a constraint records
 
@@ -15,8 +30,9 @@ Each constraint declares:
 - a measurable metric when the property is quantitative.
 
 A hard constraint activated for a change appears as a proof obligation in the canonical Change
-Record with its reason, expected evidence, and actual result. The universal baseline is always
-present; explicit risk/impact triggers add obligations. Applicability and completeness remain
+Record with its reason, expected evidence, and actual result. The universal Change Record baseline
+activates four inherited constraints; explicit risk/impact triggers add obligations, including
+`FUN-ARCHREVIEW-01` when load-bearing architecture is present. Applicability and completeness remain
 Tower/human/reviewer judgments except where a deterministic gate can prove a trigger with certainty.
 
 ## Where enforcement lives
