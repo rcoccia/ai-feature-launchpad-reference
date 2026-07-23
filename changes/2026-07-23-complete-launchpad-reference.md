@@ -85,10 +85,112 @@ This records an attestation of the command; it does not authenticate identity.
 | `FUN-DETERMINISM-01` | pending | Deterministic lifecycle enforcement evidence has not yet been recorded. |
 | `NFR-EVAL-01` | pending | Method eval/regression evidence has not yet been recorded. |
 | `TEC-DOMAIN-01` | pending | Domain-neutral byte-equality evidence has not yet been recorded. |
+| `FUN-CHANGE-01` | pass | `python -B framework/scripts/check_change_record.py --base origin/main` passes with exactly this one dated record, exact Phase 2 anchor, confirmed attestation, same-diff accepted ADR-04, and terminal lifecycle authorization. |
+| `FUN-ROADMAP-01` | pass | `--check` reports `valid constitution shape: constitution`; deterministic readiness exits 0 with exact `constitution ready: Roadmap lifecycle complete; no current approved work: constitution`. `--current-phase` exits 1 with empty stdout and the exact actionable human-reopen diagnostic. A plan-slice selector proof left the dated-record count unchanged at 5. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passes all 60 tracked Markdown files. Current-state edits preserve the non-production warning and distinguish public Phase 2 adoption from the replay repository's intentionally unchecked local Phase 2. |
+| `FUN-MERGE-01` | pass | `review_slice.py` pre-check passes. `check_merge_ready.py --base origin/main` exits 1 only because status is `confirmed` rather than `reviewed` and the final returned verdict is `PENDING`. No Reviewer or merge is performed by this producer. |
+| `FUN-ARCHREVIEW-01` | pass | This adopter introduces no new design. Promoted source Change Record `changes/2026-07-23-reopenable-roadmap-completion.md` retains the prior stable `SOUND` architecture challenge at design target `7cac934122beb59f81a165fbe51a0ee590625c17`; this branch copies only the promoted LIGHT result. |
+| `FUN-AUTONOMY-01` | pass | `python -B framework/scripts/check_autonomy.py --base origin/main` passes against newly accepted ADR-04 and the recorded delegated human command without claiming authenticated identity. |
+| `TEC-STK-01` | pass | Locked restore and Release build pass with 0 warnings and 0 errors; all 28 integration tests pass. The branch diff contains no `src/`, `tests/`, project, solution, or lock-file change. |
+| `TEC-IDB-01` | pass | All 28 product tests pass, no auth code changes, and README retains the first-line conspicuous non-production trusted-header warning. |
+| `FUN-APR-01` | pass | All 28 approval, rejection, audit, persistence, concurrency, and refusal integration cases pass; product implementation is byte-unchanged from `origin/main`. |
+| `NFR-CI-01` | pass | `.github/workflows/product-ci.yml` is unchanged; the same locked restore, Release build, and test commands pass locally, and merged PR 5 reports all six non-merge checks successful. |
+| `FUN-DETERMINISM-01` | pass | Exact-source focused tests pass 47/47. Complete readiness/current behavior, same-diff closeout authorization, and atomic reopen remain enforced in the copied analyzer and Change Record gate rather than prose only. |
+| `NFR-EVAL-01` | pass | From exact source checkout `471071e213614ffd452d23865e30eda2f72c95d2`, the full harness classifies 71/71 cases correctly at `1.00`; regression, verification, and four-agent checks pass; adoption/bootstrap tests pass 7/7 with LIGHT 56 and Full 201 field evidence. |
+| `TEC-DOMAIN-01` | pass | The default LIGHT installer reports 56 copied and 0 preserved. SHA-256 comparison reports 0/56 mismatches against exact source HEAD `471071e213614ffd452d23865e30eda2f72c95d2`; only product-owned governance/evidence files contain Launchpad semantics. |
+
+### Method sync inventory
+
+The historical product pin remains `eef68510e89bee1d16b0425dbc71c603e3e35c96`; this governed
+refresh pins exact Control Tower source `471071e213614ffd452d23865e30eda2f72c95d2`. The default
+LIGHT installer copied 56 tracked files, preserved 0, and deleted nothing. Direct SHA-256 comparison
+after commit found 56 equal and 0 mismatched:
+
+```text
+.gitattributes
+.github/agents/architect-agent.agent.md
+.github/agents/README.md
+.github/agents/reviewer-agent.agent.md
+.github/copilot-instructions.md
+.github/skills/architecture-review/scripts/check_architecture.py
+.github/skills/architecture-review/SKILL.md
+.github/skills/bootstrap-tower/assets/constraints.md
+.github/skills/bootstrap-tower/assets/mission.md
+.github/skills/bootstrap-tower/assets/roadmap.md
+.github/skills/bootstrap-tower/scripts/scaffold_constitution.py
+.github/skills/bootstrap-tower/SKILL.md
+.github/skills/inception-readiness/SKILL.md
+.github/skills/plan-slice/SKILL.md
+.github/skills/README.md
+.github/skills/record-closeout/scripts/changelog.py
+.github/skills/record-closeout/SKILL.md
+.github/skills/replan-and-correct/SKILL.md
+.github/skills/review-slice/scripts/review_slice.py
+.github/skills/review-slice/SKILL.md
+.github/workflows/autonomy.yml
+.github/workflows/docs.yml
+.github/workflows/merge.yml
+.github/workflows/provenance.yml
+AGENTS.md
+CLAUDE.md
+framework/adoption/install.md
+framework/adoption/quickstart.md
+framework/adoption/scripts/bootstrap.ps1
+framework/contracts/change-record.md
+framework/docs/explanation/extending-safely.md
+framework/docs/explanation/overview.md
+framework/docs/how-to/course-correct.md
+framework/docs/how-to/govern-inception.md
+framework/docs/how-to/review-a-design.md
+framework/docs/how-to/run-a-slice.md
+framework/docs/README.md
+framework/docs/reference/agents.md
+framework/docs/reference/constraints.md
+framework/docs/reference/decisions.md
+framework/docs/reference/gates.md
+framework/docs/reference/glossary.md
+framework/docs/reference/skills.md
+framework/docs/tutorials/first-delivery.md
+framework/doctrine/artifacts-skills-lifecycle.md
+framework/doctrine/glossary.md
+framework/doctrine/lineage.md
+framework/doctrine/MANIFESTO.md
+framework/doctrine/operating-model.md
+framework/scripts/change_record.py
+framework/scripts/check_autonomy.py
+framework/scripts/check_change_record.py
+framework/scripts/check_docs.py
+framework/scripts/check_merge_ready.py
+framework/scripts/check_provenance.py
+framework/scripts/constraint_model.py
+```
+
+Twenty copied paths changed relative to `origin/main`: `.github/copilot-instructions.md`;
+bootstrap-tower `SKILL.md`, constraints/roadmap assets, and analyzer; inception-readiness,
+plan-slice, record-closeout, and replan-and-correct Skills; the Change Record contract; seven
+framework guidance/doctrine documents; and `framework/scripts/change_record.py` plus
+`framework/scripts/check_change_record.py`. All other copied paths were byte-identical already.
 
 ## Corrections
 
-`pending`
+- **ADR shape correction:** the first recorded ADR status used a prose heading. The promoted gate
+  required exact `- **status:** accepted`; ADR-04 was corrected before terminal validation, with no
+  decision or scope change.
+- **Eval invocation correction:** the first full eval attempt launched the absolute source script
+  while retaining the adopter working directory. Root-relative provenance fixture resolution
+  therefore misclassified only `provenance/good` and reported 70/71. Rerunning from exact source
+  checkout root passed 71/71 at `1.00`; no source, fixture, gate, or product file changed.
+- No product defect, lifecycle-contract defect, architecture rework, gate weakening, or constraint
+  decoration was required.
+
+## Closeout
+
+| Disposition | Record |
+|---|---|
+| delivered | Exact 56-file LIGHT refresh from `471071e`; 13 locally reproducible active constraints; checked Phase 2 replay/docs evidence; exact complete lifecycle marker; complete/no-current CLI behavior; and current public documentation. |
+| remaining | Independent final review, returned-verdict recording, transition to reviewed, merge-ready success, and human merge authorization remain intentionally outside this producer scope. No approved product or Roadmap work remains. |
+| discovered | The first source eval invocation must run from the source checkout root because provenance golden references are root-relative; corrected execution passed all 71 cases. |
+| evidence | Roadmap Delta links replay `9c12fb06ce3f6589fee7183fdcdd49a15df602cf`, public replay evidence, PR 5 merge `2def9df0dcbf8fc48e7e2b7ada2a9c6b7cf206d4`, and PR 3 product proof. `CHANGELOG.md` deterministically advances through governance commit `916af8092d4827f99f219a2bd997f3ac33b49f3d`. |
 
 ## Independent final review
 

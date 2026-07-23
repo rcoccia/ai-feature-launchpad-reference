@@ -1,7 +1,15 @@
 # Changelog
-<!-- changelog:last-commit 3796075cdddbf5358f4ba3e0659aca81af83a1b8 -->
+<!-- changelog:last-commit 916af8092d4827f99f219a2bd997f3ac33b49f3d -->
 
 ## 2026-07-23
+- Close Launchpad roadmap as reopenable
+- Sync promoted Control Tower LIGHT lifecycle
+- Record Launchpad lifecycle authorization
+- Merge pull request #5 from rcoccia/rcoccia-phase2-replay-docs
+- Record PR5 review PROMOTE
+- Correct replay current-state wording
+- Record PR5 review BLOCK
+- Publish successful replay evidence
 - Record replay findings and clarify JSON
 - Correct replay Roadmap lifecycle
 - Record replay documentation evidence
