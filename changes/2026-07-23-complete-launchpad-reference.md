@@ -190,7 +190,7 @@ framework guidance/doctrine documents; and `framework/scripts/change_record.py` 
 | delivered | Exact 56-file LIGHT refresh from `471071e`; 13 locally reproducible active constraints; checked Phase 2 replay/docs evidence; exact complete lifecycle marker; complete/no-current CLI behavior; and current public documentation. |
 | remaining | Independent final review, returned-verdict recording, transition to reviewed, merge-ready success, and human merge authorization remain intentionally outside this producer scope. No approved product or Roadmap work remains. |
 | discovered | The first source eval invocation must run from the source checkout root because provenance golden references are root-relative; corrected execution passed all 71 cases. |
-| evidence | Roadmap Delta links replay `9c12fb06ce3f6589fee7183fdcdd49a15df602cf`, public replay evidence, PR 5 merge `2def9df0dcbf8fc48e7e2b7ada2a9c6b7cf206d4`, and PR 3 product proof. `CHANGELOG.md` deterministically advances through governance commit `916af8092d4827f99f219a2bd997f3ac33b49f3d`. |
+| evidence | Roadmap Delta links replay `9c12fb06ce3f6589fee7183fdcdd49a15df602cf`, public replay evidence, PR 5 merge `2def9df0dcbf8fc48e7e2b7ada2a9c6b7cf206d4`, and PR 3 product proof. `CHANGELOG.md` deterministically advances through evidence commit `c8d587202f9e6b51e0bc3f67dcee919e0729d0bd`. |
 
 ## Independent final review
 

@@ -1,7 +1,8 @@
 # Changelog
-<!-- changelog:last-commit 916af8092d4827f99f219a2bd997f3ac33b49f3d -->
+<!-- changelog:last-commit c8d587202f9e6b51e0bc3f67dcee919e0729d0bd -->
 
 ## 2026-07-23
+- Record terminal lifecycle evidence
 - Close Launchpad roadmap as reopenable
 - Sync promoted Control Tower LIGHT lifecycle
 - Record Launchpad lifecycle authorization
