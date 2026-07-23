@@ -1,7 +1,11 @@
 # Changelog
-<!-- changelog:last-commit 01c6e10407c2174ee024726dff0cb9ec4bc1ebc1 -->
+<!-- changelog:last-commit ec153ea996d33b3ef6a08fb08536aacf59452368 -->
 
 ## 2026-07-23
+- Add fresh-context replay phase
+- Merge pull request #2 from rcoccia/rcoccia-adopt-kernel-baseline-constraints
+- Record independent review verdict
+- Record kernel correction closeout
 - Correct adopter kernel boundary
 - Adopt portable kernel baseline constraints
 - Merge pull request #1 from rcoccia/rcoccia-launchpad-inception
