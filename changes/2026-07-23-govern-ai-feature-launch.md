@@ -109,7 +109,18 @@ This records an attestation of the command; it does not authenticate identity.
 
 ## Evidence
 
-`pending`
+| Constraint | Result | Evidence |
+|---|---|---|
+| `FUN-CHANGE-01` | pass | `python -B framework/scripts/check_change_record.py --base origin/main` passes with this one canonical feature record and its triggered design companion; no `specs/` path exists. |
+| `FUN-ROADMAP-01` | pass | Readiness passed with exact Phase 1 throughout implementation; closeout checks its delivered item and the selector advances to human-authorized `Phase 2: Reproduce inception and feature from a fresh context` without changing either phase's semantics. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passes 53 tracked Markdown files; README, API, and trust-boundary docs state the non-production warning and do not perform the Phase 2 replay. |
+| `FUN-MERGE-01` | pass | The completed confirmed record passes the review pre-check on the frozen pushed target; GitHub checks are green except the expected governed-merge block on `confirmed` status and final verdict `PENDING`. |
+| `FUN-ARCHREVIEW-01` | pass | The explicit architecture pre-check passes and the actual stable `SOUND` for design target `ed91419236a01fafffa21760ed446b024b81f7b7` is recorded above; code began only afterward. |
+| `FUN-AUTONOMY-01` | pass | `python -B framework/scripts/check_autonomy.py --base origin/main` passes; Mission and Constraints are unchanged and implementation remains inside the confirmed strategy. |
+| `TEC-STK-01` | pass | Locked Release restore/build passes for `net10.0`; the API uses direct `Microsoft.Data.Sqlite` 10.0.10 and patched native bundle 2.1.12 against one file-backed SQLite database, with no ORM or provider abstraction. |
+| `TEC-IDB-01` | pass | Integration tests prove exact trusted-header validation, every-response warning, no-identity read routes, and Production startup refusal; README and `docs/trust-boundary.md` conspicuously reject a production-authentication claim. |
+| `FUN-APR-01` | pass | All 28 integration cases pass, covering exact named creation, both approval orders, three-actor separation, authorized terminal rejection, successful and refused audit, duplicate and concurrent serialization, durable reload, schema checks, and append-only trigger enforcement. |
+| `NFR-CI-01` | pass | Product-owned run `29973241799` completed `build-and-test` successfully in 28 seconds on implementation commit `8d5099acf00ac4d4c61040858698b6aa90b97c2d`, using locked restore, Release build, and integration tests. |
 
 ## Corrections
 
@@ -119,6 +130,22 @@ This records an attestation of the command; it does not authenticate identity.
   phase prevents Roadmap exhaustion after this feature is delivered. Exact Phase 1 remains current
   and unchanged; the observable outcome, active constraints, product design, dependencies, and
   implementation plan do not change. The prior stable architecture `SOUND` remains applicable.
+- **Dependency correction:** initial restore resolved transitive
+  `SQLitePCLRaw.lib.e_sqlite3` 2.1.11 with a high-severity advisory. The API now pins
+  `SQLitePCLRaw.bundle_e_sqlite3` 2.1.12, locked restore is clean, and
+  `dotnet list AI.FeatureLaunchpad.sln package --include-transitive --vulnerable` reports no
+  vulnerable package.
+- **Compile correction:** the first build exposed a generic nullable wrapper that could not represent
+  a missing enum role. Explicit actor and role parse records replaced it without casts or behavior
+  change; subsequent builds complete with zero warnings and errors.
+- **Persistence correctness correction:** before the semantic run, the rejection-field check was
+  tightened to require all-null or all-present fields, and audit reads now dispose their reader before
+  committing the read transaction.
+- **Integration-host correction:** the first complete run had 13 failures because the store captured
+  configuration before `WebApplicationFactory` applied its temporary database override; two
+  collection/index expectations were also test assertion defects. Store construction now resolves
+  final configuration through dependency injection, assertions inspect durable values and SQLite
+  auto-indexes correctly, and the next Release run passed all 28 cases.
 
 ## Architecture
 
@@ -435,6 +462,26 @@ stable target above. Existing routes remain as designed; no additional surface i
 internal contradiction was found.
 
 **Residual:** `FUN-ARCHREVIEW-01::semantic-challenge` is covered by this returned stable `SOUND`.
+
+## Delivery metrics
+
+| Metric | Result |
+|---|---|
+| planned steps | 5 of 5 completed |
+| changed artifacts | 25 branch paths: 21 product implementation paths, canonical record, design companion, Roadmap, and changelog |
+| elapsed | approximately 12 minutes from implementation authorization to the first green remote product CI result |
+| executable proof | 28 integration cases; zero failed or skipped on the final local Release run |
+| rework | 3 targeted cycles: dependency advisory correction, compile-time role model correction, and first-run test-host/assertion correction |
+| defects found | 1 vulnerable transitive dependency, 1 compile type defect, 1 test-host configuration defect, 2 assertion defects, and 2 proactive persistence correctness defects; all corrected, with no known defect remaining |
+
+## Closeout
+
+| Disposition | Record |
+|---|---|
+| delivered | The exact Phase 1 launch request is delivered through a .NET 10 Minimal API with the sole `featureName` input, direct file-backed SQLite atomic state/audit transitions, distinct requester/Product/AI-Risk approvals, authorized terminal rejection, audited refusals, trusted-header warnings, 28 integration cases, product CI, and bounded public docs. |
+| remaining | Independent final no-edit review, actual returned-verdict recording, governed-merge success, and separate human merge authorization remain pending. The planned Phase 2 fresh-context replay remains wholly unstarted. |
+| discovered | The initial SQLite native bundle carried a published advisory and the test host initially applied its database override too late; both were corrected without changing product semantics, architecture, constraints, dependencies beyond the patched direct pin, or scope. |
+| evidence | Phase 1 is checked in `constitution/roadmap.md`; deterministic `CHANGELOG.md` tracks implementation commit `8d5099acf00ac4d4c61040858698b6aa90b97c2d`; local locked Release restore/build and all 28 tests pass; product CI run `29973241799` is green. |
 
 ## Independent final review
 
