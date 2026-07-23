@@ -79,6 +79,12 @@ This records an attestation of the command; it does not authenticate identity.
 | `FUN-MERGE-01` | pending | Review pre-check and expected merge-ready boundary have not yet been recorded. |
 | `FUN-ARCHREVIEW-01` | pending | No-trigger and no-companion evidence has not yet been recorded. |
 | `FUN-AUTONOMY-01` | pending | Human-decision ADR and autonomy evidence have not yet been recorded. |
+| `FUN-CHANGE-01` | pass | On governance commit `ec153ea996d33b3ef6a08fb08536aacf59452368`, `python -B framework/scripts/check_change_record.py --base origin/main` passed with exactly this one dated record and no legacy `specs/` change. |
+| `FUN-ROADMAP-01` | pass | `python -B .github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness constitution` passed, and `--current-phase constitution` returned exact `Phase 1: Govern one AI-feature launch request`; both Phase 1 and planned Phase 2 remain unchecked. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passed all 49 tracked Markdown files with UTF-8/no-BOM, CRLF, and balanced-fence checks. |
+| `FUN-ARCHREVIEW-01` | pass | The exact branch diff contains only this Change Record, ADR-03, and the Roadmap; no design companion, product code, method code, dependency, or load-bearing architecture decision exists. |
+| `FUN-AUTONOMY-01` | pass | ADR-03 records the explicitly delegated strategic phase decision. `python -B framework/scripts/check_autonomy.py --base origin/main` passed with no protected Mission or Constraints change, while provenance still passed for exactly 10 unchanged constraints. |
+| `FUN-MERGE-01` | pass | The completed confirmed record passes the review pre-check; merge readiness intentionally blocks only because status remains `confirmed` and the independent verdict remains `pending`. |
 
 ## Corrections
 
@@ -87,6 +93,15 @@ This records an attestation of the command; it does not authenticate identity.
 - No prior product requirement, design, implementation evidence, architecture review, or final
   review exists to invalidate. Mission, Constraints, active product laws, dependencies, and Phase 1
   semantics remain unchanged.
+
+## Closeout
+
+| Disposition | Record |
+|---|---|
+| delivered | ADR-03 now records the delegated strategy decision, and the Roadmap adds one planned fresh-context replay phase while preserving the exact unchecked Phase 1 product outcome as current. |
+| remaining | Phase 1 product implementation and evidence remain wholly undelivered; Phase 2 replay remains planned and unchecked. Independent final review, returned-verdict recording, transition to reviewed, merge-ready success, and human merge authorization also remain pending. |
+| discovered | No additional product capability, dependency, architecture decision, or strategy change was discovered; the replay remains bounded to public-docs-only reconstruction through review-ready. |
+| evidence | Governance commit `ec153ea996d33b3ef6a08fb08536aacf59452368`, this Change Record, ADR-03, the Roadmap, and deterministic `CHANGELOG.md` record the correction; focused docs, readiness, selector, autonomy, provenance, Change Record, diff, and cache checks passed. |
 
 ## Independent final review
 
