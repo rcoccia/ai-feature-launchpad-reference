@@ -275,6 +275,8 @@ public sealed class LaunchpadApiTests
         using var scope = new TestScope();
         var approved = await CreateAsync(scope, "Approved feature");
         await ApproveAsync(scope, approved.Id);
+        var approvedBefore = await GetAsync(scope, approved.Id);
+        var approvedAuditBefore = await GetAuditAsync(scope, approved.Id);
 
         using var approvedRejection = await SendAsync(
             scope.Client,
@@ -284,13 +286,27 @@ public sealed class LaunchpadApiTests
             HttpStatusCode.Conflict,
             "request_terminal",
             approved.Id);
-        Assert.Equal(2, (await GetAsync(scope, approved.Id)).Version);
+        var approvedAfter = await GetAsync(scope, approved.Id);
+        var approvedAuditAfter = await GetAuditAsync(scope, approved.Id);
+        Assert.Equal(approvedBefore.Status, approvedAfter.Status);
+        Assert.Equal(approvedBefore.Version, approvedAfter.Version);
+        Assert.Equal(approvedAuditBefore.Events.Count + 1, approvedAuditAfter.Events.Count);
+        Assert.Equal(
+            Enumerable.Range(1, approvedAuditAfter.Events.Count),
+            approvedAuditAfter.Events.Select(entry => entry.Sequence));
+        var approvedRefusal = approvedAuditAfter.Events[^1];
+        Assert.Equal("Refused", approvedRefusal.Outcome);
+        Assert.Equal("request_terminal", approvedRefusal.ReasonCode);
+        Assert.Equal(approvedBefore.Status, approvedRefusal.StatusAfter);
+        Assert.Equal(approvedBefore.Version, approvedRefusal.VersionAfter);
 
         var rejected = await CreateAsync(scope, "Rejected feature");
         using var rejection = await SendAsync(
             scope.Client,
             DecisionRequest(rejected.Id, "rejection", "risk-1", "AI-Risk"));
         Assert.Equal(HttpStatusCode.OK, rejection.StatusCode);
+        var rejectedBefore = await GetAsync(scope, rejected.Id);
+        var rejectedAuditBefore = await GetAuditAsync(scope, rejected.Id);
 
         using var repeatedRejection = await SendAsync(
             scope.Client,
@@ -300,7 +316,19 @@ public sealed class LaunchpadApiTests
             HttpStatusCode.Conflict,
             "request_terminal",
             rejected.Id);
-        Assert.Equal(1, (await GetAsync(scope, rejected.Id)).Version);
+        var rejectedAfter = await GetAsync(scope, rejected.Id);
+        var rejectedAuditAfter = await GetAuditAsync(scope, rejected.Id);
+        Assert.Equal(rejectedBefore.Status, rejectedAfter.Status);
+        Assert.Equal(rejectedBefore.Version, rejectedAfter.Version);
+        Assert.Equal(rejectedAuditBefore.Events.Count + 1, rejectedAuditAfter.Events.Count);
+        Assert.Equal(
+            Enumerable.Range(1, rejectedAuditAfter.Events.Count),
+            rejectedAuditAfter.Events.Select(entry => entry.Sequence));
+        var rejectedRefusal = rejectedAuditAfter.Events[^1];
+        Assert.Equal("Refused", rejectedRefusal.Outcome);
+        Assert.Equal("request_terminal", rejectedRefusal.ReasonCode);
+        Assert.Equal(rejectedBefore.Status, rejectedRefusal.StatusAfter);
+        Assert.Equal(rejectedBefore.Version, rejectedRefusal.VersionAfter);
     }
 
     [Fact]
