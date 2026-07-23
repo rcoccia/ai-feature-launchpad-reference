@@ -1,8 +1,9 @@
 # ADR-20260723-04: Complete the reopenable Launchpad reference
 
-## Status
-
-accepted
+- **id:** ADR-20260723-04
+- **status:** accepted
+- **date:** 2026-07-23
+- **trigger:** `roadmap-exhausted / cycle-boundary`
 
 Accepted on 2026-07-23 through an explicit delegated human command. This records an attestation of
 the command; it does not authenticate identity.

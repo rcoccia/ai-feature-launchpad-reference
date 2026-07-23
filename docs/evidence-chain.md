@@ -8,8 +8,8 @@ artifact and executable evidence. The chain is not a production certification.
 | Link | Public artifact | What it proves |
 |---|---|---|
 | Purpose | `constitution/mission.md` | One synthetic-enterprise launch-approval capability, its users, success, and non-goals. |
-| Delivery selector | `constitution/roadmap.md` | Phase 1 delivered the feature and fresh replay evidence succeeded; Phase 2 intentionally remains current and unchecked pending separately governed `Lifecycle: complete` adoption. |
-| Cross-slice laws | `constitution/constraints.md` | Six inherited Control Tower laws plus four product laws bind planning, design, code, evidence, and review. |
+| Delivery selector | `constitution/roadmap.md` | Phase 1 delivered the feature, Phase 2 records successful replay/docs evidence, and exact `Lifecycle: complete` means no current approved work. |
+| Cross-slice laws | `constitution/constraints.md` | Nine method laws plus four unchanged product laws bind planning, design, code, evidence, and review. |
 | Human authority | `constitution/decisions/ADR-20260723-01-authorize-launchpad-inception.md` | Attests the confirmed inception decision without claiming identity authentication. |
 | Governed slice | `changes/2026-07-23-govern-ai-feature-launch.md` | Connects Phase 1 to scope, ten obligations, plan, append-only evidence, corrections, closeout, and actual reviews. |
 | Load-bearing design | `changes/2026-07-23-govern-ai-feature-launch/design-under-test.md` | Fixes API, SQLite, transaction, concurrency, refusal-audit, and trusted-header semantics before code. |
@@ -19,6 +19,7 @@ artifact and executable evidence. The chain is not a production certification.
 | Product CI | `.github/workflows/product-ci.yml` | Locked restore, Release build, and tests in product-owned CI. |
 | Product contract | `README.md`, `docs/api.md`, `docs/trust-boundary.md` | Run instructions, exact nested request/audit JSON with decision/event timestamps, and explicit non-production identity boundary. |
 | Replay proof | `docs/replay-evidence.md` | Fresh no-remote reconstruction from empty repository through the all-green local review-ready boundary. |
+| Lifecycle completion | `constitution/decisions/ADR-20260723-04-complete-reopenable-reference.md`, `changes/2026-07-23-complete-launchpad-reference.md` | Human-authorized Phase 2 closeout and intentional complete-but-reopenable state. |
 | Final judgment | Phase 1 Change Record, `Independent final review` | Append-only BLOCK corrections followed by actual stable `PROMOTE`. |
 | Merge proof | PR 3 and merge commit `0a700178269acdf284c14c9033577857357c3dd3` | Human-controlled GitHub merge of the reviewed reference feature. |
 
@@ -68,8 +69,9 @@ Roadmap exhaustion.
 
 A successful replay adds external reproducibility evidence; it does not require a second local
 Change Record, implement or close local Phase 2, or add a second product capability, production
-assurance, cloud repository, final reviewer verdict, or merge. The measured replay passed, but the
-Phase 2 Roadmap item remains unchecked pending the separately governed lifecycle-contract adoption.
+assurance, cloud repository, final reviewer verdict, or merge. The measured replay passed, and the
+public reference later adopted that evidence through the separately governed lifecycle completion.
 
 The measured result is published in [Fresh-context replay evidence](replay-evidence.md). It proves
-reproducibility through review-ready while deliberately leaving Phase 2 unchecked.
+reproducibility through review-ready; the public Roadmap now records Phase 2 delivered and exact
+`Lifecycle: complete`.

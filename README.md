@@ -96,5 +96,6 @@ X-Reference-Authentication-Warning: NON-PRODUCTION; caller-supplied headers are 
 - [Intent-to-merge evidence chain](docs/evidence-chain.md)
 - [Canonical governed change](changes/2026-07-23-govern-ai-feature-launch.md)
 
-Fresh-context replay evidence succeeded. Phase 2 intentionally remains current and unchecked pending
-separate human-authorized adoption of the promoted `Lifecycle: complete` contract.
+Fresh-context replay evidence succeeded, Phase 2 is delivered, and the finite Roadmap is intentionally
+complete with no current approved work. A future requirement can reopen it only through a new
+human-authorized ADR and atomic governed Roadmap transition.
