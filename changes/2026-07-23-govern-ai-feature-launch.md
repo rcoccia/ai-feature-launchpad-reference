@@ -120,7 +120,7 @@ This records an attestation of the command; it does not authenticate identity.
 | `TEC-STK-01` | pass | Locked Release restore/build passes for `net10.0`; the API uses direct `Microsoft.Data.Sqlite` 10.0.10 and patched native bundle 2.1.12 against one file-backed SQLite database, with no ORM or provider abstraction. |
 | `TEC-IDB-01` | pass | Integration tests prove exact trusted-header validation, every-response warning, no-identity read routes, and Production startup refusal; README and `docs/trust-boundary.md` conspicuously reject a production-authentication claim. |
 | `FUN-APR-01` | pass | All 28 integration cases pass, including direct audit retrieval after terminal commands against both Approved and Rejected targets; each proves one appended `Refused` / `request_terminal` event, contiguous sequence, and unchanged durable status/version. |
-| `NFR-CI-01` | pending | Locked restore, zero-warning/error Release build, all 28 integration cases, and the vulnerability scan pass locally after the terminal-audit correction; the product-owned workflow must rerun on the pushed correction target before fresh final review. |
+| `NFR-CI-01` | pass | Product-owned run `29985547135` completed successfully on correction target `94e705f764315998be0b3e237e937597e5dcd1ef`, executing locked restore, Release build, and all 28 integration cases with the new terminal-audit assertions. |
 
 ## Corrections
 
@@ -153,7 +153,8 @@ This records an attestation of the command; it does not authenticate identity.
   `Refused` / `request_terminal` event, contiguous sequence, and unchanged durable status/version
   for each. The two ambiguous replay references now use the exact canonical
   `Phase 2: Reproduce inception and feature from a fresh context` name. The focused case and all 28
-  integration cases pass without a product-code change; remote product CI remains to be refreshed.
+  integration cases pass without a product-code change; product CI run `29985547135` then passed on
+  correction target `94e705f764315998be0b3e237e937597e5dcd1ef`.
 
 ## Architecture
 
@@ -487,9 +488,9 @@ internal contradiction was found.
 | Disposition | Record |
 |---|---|
 | delivered | The exact Phase 1 launch request is delivered through a .NET 10 Minimal API with the sole `featureName` input, direct file-backed SQLite atomic state/audit transitions, distinct requester/Product/AI-Risk approvals, authorized terminal rejection, audited refusals, trusted-header warnings, 28 integration cases, product CI, and bounded public docs. |
-| remaining | Product CI must rerun on the pushed correction target, followed by a fresh independent final no-edit review, actual returned-verdict recording, governed-merge success, and separate human merge authorization. The planned Phase 2 fresh-context replay remains wholly unstarted. |
+| remaining | A fresh independent final no-edit review, actual returned-verdict recording, governed-merge success, and separate human merge authorization remain pending. The planned Phase 2 fresh-context replay remains wholly unstarted. |
 | discovered | The initial SQLite native bundle carried a published advisory, the test host initially applied its database override too late, and final-review Attempt 1 found one evidence gap plus one record wording defect; all were corrected without changing product semantics, architecture, constraints, dependencies beyond the patched direct pin, or scope. |
-| evidence | Phase 1 is checked in `constitution/roadmap.md`; deterministic `CHANGELOG.md` tracks implementation commit `8d5099acf00ac4d4c61040858698b6aa90b97c2d`; post-correction locked restore and zero-warning/error Release build pass, all 28 integration cases pass, and the vulnerability scan is clean. |
+| evidence | Phase 1 is checked in `constitution/roadmap.md`; deterministic `CHANGELOG.md` tracks implementation commit `8d5099acf00ac4d4c61040858698b6aa90b97c2d`; post-correction locked restore and zero-warning/error Release build pass, all 28 integration cases pass, the vulnerability scan is clean, and product CI run `29985547135` is green on correction target `94e705f764315998be0b3e237e937597e5dcd1ef`. |
 
 ## Independent final review
 
