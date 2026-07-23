@@ -116,7 +116,12 @@ This records an attestation of the command; it does not authenticate identity.
 
 ## Closeout
 
-`pending`
+| Disposition | Record |
+|---|---|
+| delivered | Pending until the documentation branch is published and the fresh replay completes. |
+| remaining | Documentation publication, fresh replay, measured evidence, Phase 2 closure, and final review remain pending. |
+| discovered | Pending fresh replay observations; no discovery is claimed by documentation authoring alone. |
+| evidence | Pending the published branch, fresh replay report, and scope-preserving Roadmap/changelog evidence. |
 
 ## Independent final review
 
