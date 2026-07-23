@@ -8,7 +8,7 @@ artifact and executable evidence. The chain is not a production certification.
 | Link | Public artifact | What it proves |
 |---|---|---|
 | Purpose | `constitution/mission.md` | One synthetic-enterprise launch-approval capability, its users, success, and non-goals. |
-| Delivery selector | `constitution/roadmap.md` | Phase 1 delivered the feature; Phase 2 remains open until a fresh replay succeeds. |
+| Delivery selector | `constitution/roadmap.md` | Phase 1 delivered the feature and fresh replay evidence succeeded; Phase 2 intentionally remains current and unchecked pending separately governed `Lifecycle: complete` adoption. |
 | Cross-slice laws | `constitution/constraints.md` | Six inherited Control Tower laws plus four product laws bind planning, design, code, evidence, and review. |
 | Human authority | `constitution/decisions/ADR-20260723-01-authorize-launchpad-inception.md` | Attests the confirmed inception decision without claiming identity authentication. |
 | Governed slice | `changes/2026-07-23-govern-ai-feature-launch.md` | Connects Phase 1 to scope, ten obligations, plan, append-only evidence, corrections, closeout, and actual reviews. |

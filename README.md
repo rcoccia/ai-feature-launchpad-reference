@@ -96,5 +96,5 @@ X-Reference-Authentication-Warning: NON-PRODUCTION; caller-supplied headers are 
 - [Intent-to-merge evidence chain](docs/evidence-chain.md)
 - [Canonical governed change](changes/2026-07-23-govern-ai-feature-launch.md)
 
-Phase 2 documentation prepares a later fresh-context replay. The Phase 2 Roadmap item remains
-unchecked until that independent replay records successful evidence.
+Fresh-context replay evidence succeeded. Phase 2 intentionally remains current and unchecked pending
+separate human-authorized adoption of the promoted `Lifecycle: complete` contract.

@@ -138,6 +138,8 @@ This records an attestation of the command; it does not authenticate identity.
 | `TEC-IDB-01` | pass | Final replay evidence: reconstructed docs/tests preserved the non-production trusted-header warning and boundary; final product proof remained green. |
 | `FUN-APR-01` | pass | Final replay evidence: 28 integration tests passed with zero failures/skips after the corrected design and nested JSON implementation; request/audit contract checks rejected flattened internal fields. |
 | `NFR-CI-01` | pass | Final replay evidence: the reconstructed product-owned CI contract used locked restore, Release build, and tests; local proof passed and the vulnerability scan found no vulnerable package. |
+| `FUN-ROADMAP-01` | pass | Final-review Attempt 1 correction: README and the evidence-chain delivery-selector row now state the exact current truth—replay evidence succeeded, while Phase 2 intentionally remains current and unchecked pending separately governed `Lifecycle: complete` adoption. Roadmap itself is unchanged. |
+| `NFR-DOCS-01` | pass | Final-review Attempt 1 correction: the only two stale current-state sentences identified at target `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7` were corrected without changing replay evidence, closeout semantics, product, constitution, or scope. |
 
 ## Corrections
 
@@ -167,6 +169,13 @@ This records an attestation of the command; it does not authenticate identity.
   One Roadmap blocker used the parent message route; `ask_user` was never used. Public
   `docs/replay-evidence.md` is the self-contained evidence summary. This correction closes the
   documentation/reconstruction evidence target only; it does not check Phase 2 or prewrite review.
+- **Final-review Attempt 1 correction (2026-07-23):** stable review of target
+  `dce9214ca71ce32ebfe7eaf8e6880c5354bb54f7` returned `BLOCK` because README lines 99-100
+  and the evidence-chain delivery-selector row still described successful replay as future. Those
+  two surfaces now state that replay evidence succeeded while Phase 2 intentionally remains current
+  and unchecked pending separately governed `Lifecycle: complete` adoption. Attempt 1 remains
+  preserved above; no Roadmap, closeout, replay evidence, product, design, constitution, kit,
+  terminal marker, or Phase 3 semantics changed.
 
 ## Closeout
 
