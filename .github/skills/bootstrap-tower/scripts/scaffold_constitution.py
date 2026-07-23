@@ -1,12 +1,13 @@
 """Scaffold and validate a three-file constitution directory.
 
-The default mode copies missing constitution templates into a target specs
-folder. The check mode validates that the target files have the required
-markdown shape and constraint metadata blocks. The readiness mode runs the
-shape check plus extra inception-readiness sub-checks: every hard constraint
-carries a verification, every roadmap phase is valid and a current phase
-exists, and the mission Success section is non-empty. Current-phase mode
-prints the selected canonical Roadmap heading.
+The default mode copies missing constitution templates into a target
+constitution folder. The check mode validates that the target files have the
+required Markdown shape and constraint metadata blocks. The readiness mode
+runs the shape check plus extra inception-readiness sub-checks: the portable
+method baseline IDs are present, every hard constraint carries a verification,
+every Roadmap phase is valid and a current phase exists, and the Mission
+Success section is non-empty. Current-phase mode prints the selected canonical Roadmap heading. Roadmap-analysis mode exposes the
+same normalized analyzer result for deterministic gate consumers.
 """
 
 from __future__ import annotations
@@ -41,7 +42,23 @@ PHASE_HEADING = re.compile(r"^##(?!#)\s+Phase\b", re.IGNORECASE)
 SECTION_HEADING = re.compile(r"^#{1,2}(?!#)\s+")
 GOAL_FIELD = re.compile(r"^\s*(?:Goal:|\*\*Goal:\*\*)\s*(.*?)\s*$", re.IGNORECASE)
 STATUS_FIELD = re.compile(r"^\s*\*\*Status:\*\*\s*(.*?)\s*$")
+LIFECYCLE_FIELD = re.compile(r"^\*\*Lifecycle:\*\*\s*(.*?)\s*$")
+LIFECYCLE_LIKE = re.compile(
+    r"^\s*(?:>\s*)?(?:[-*]\s+)?(?:\*{0,2})Lifecycle(?:\*{0,2})"
+    r"(?:\s*:|\s+complete(?:\s|$))",
+    re.IGNORECASE,
+)
+FENCE_LINE = re.compile(r"^\s{0,3}(?P<fence>`{3,}|~{3,})")
+FENCE_CLOSE = re.compile(r"^\s{0,3}(?P<fence>`{3,}|~{3,})[ \t]*$")
 CHECKBOX_ITEM = re.compile(r"^- \[([ xX])\]\s+(\S.*)$")
+REQUIRED_PORTABLE_CONSTRAINT_IDS = (
+    "FUN-CHANGE-01",
+    "FUN-ROADMAP-01",
+    "NFR-DOCS-01",
+    "FUN-MERGE-01",
+    "FUN-ARCHREVIEW-01",
+    "FUN-AUTONOMY-01",
+)
 
 
 class ToolError(Exception):
@@ -77,6 +94,9 @@ class RoadmapAnalysis:
     phases: tuple[RoadmapPhase, ...]
     dispositions: tuple[str, ...]
     current: RoadmapPhase | None
+    lifecycle: str | None
+    lifecycle_line: int | None
+    is_complete: bool
     errors: tuple[str, ...]
 
 
@@ -254,27 +274,150 @@ def _phase_error(path: Path, phase: RoadmapPhase, line: int, message: str) -> st
     )
 
 
+def _markdown_visibility(lines: list[str]) -> tuple[bool, ...]:
+    """Mark lines outside bounded Markdown fences, honoring marker type and length."""
+    visible: list[bool] = []
+    fence_char: str | None = None
+    fence_length = 0
+    for line in lines:
+        if fence_char is None:
+            match = FENCE_LINE.match(line)
+            if match is None:
+                visible.append(True)
+                continue
+            marker = match.group("fence")
+            fence_char = marker[0]
+            fence_length = len(marker)
+            visible.append(False)
+            continue
+
+        visible.append(False)
+        match = FENCE_CLOSE.fullmatch(line)
+        if match is None:
+            continue
+        marker = match.group("fence")
+        if marker[0] == fence_char and len(marker) >= fence_length:
+            fence_char = None
+            fence_length = 0
+    return tuple(visible)
+
+
+def _lifecycle_facts(
+    path: Path, lines: list[str], visible: tuple[bool, ...], first_phase: int
+) -> tuple[str | None, int | None, list[tuple[int, str]]]:
+    """Parse the one optional top-level lifecycle declaration outside fenced examples."""
+    lifecycle: str | None = None
+    lifecycle_line: int | None = None
+    errors: list[tuple[int, str]] = []
+
+    for index, line in enumerate(lines):
+        if not visible[index]:
+            continue
+        line_number = index + 1
+        exact = LIFECYCLE_FIELD.fullmatch(line)
+        indented = (
+            LIFECYCLE_FIELD.fullmatch(line.lstrip())
+            if line != line.lstrip()
+            else None
+        )
+        if exact is not None:
+            if index >= first_phase:
+                errors.append(
+                    (
+                        line_number,
+                        f"{path}:{line_number}: '**Lifecycle:**' must be top-level before "
+                        "the first canonical '## Phase'",
+                    )
+                )
+                continue
+            value = exact.group(1).strip()
+            if lifecycle_line is not None:
+                errors.append(
+                    (
+                        line_number,
+                        f"{path}:{line_number}: duplicate '**Lifecycle:**' declaration; "
+                        f"first declaration is at line {lifecycle_line}",
+                    )
+                )
+                continue
+            lifecycle_line = line_number
+            if value == "complete":
+                lifecycle = value
+            else:
+                shown = value if value else "<blank>"
+                errors.append(
+                    (
+                        line_number,
+                        f"{path}:{line_number}: invalid '**Lifecycle:**' value '{shown}' "
+                        "(expected exactly 'complete')",
+                    )
+                )
+            continue
+        if indented is not None:
+            errors.append(
+                (
+                    line_number,
+                    f"{path}:{line_number}: '**Lifecycle:**' must be top-level before "
+                    "the first canonical '## Phase'",
+                )
+            )
+            continue
+        if LIFECYCLE_LIKE.match(line):
+            errors.append(
+                (
+                    line_number,
+                    f"{path}:{line_number}: malformed Roadmap lifecycle declaration; "
+                    "expected exactly '**Lifecycle:** complete' at top level before "
+                    "the first '## Phase'",
+                )
+            )
+    return lifecycle, lifecycle_line, errors
+
+
 def analyze_roadmap(path: Path) -> RoadmapAnalysis:
     """Parse, validate, derive state, and select the canonical current phase."""
     if not path.is_file():
         return RoadmapAnalysis(
-            (), (), None, (f"{path}: missing required constitution file roadmap.md",)
+            phases=(),
+            dispositions=(),
+            current=None,
+            lifecycle=None,
+            lifecycle_line=None,
+            is_complete=False,
+            errors=(f"{path}: missing required constitution file roadmap.md",),
         )
 
     lines = read_text_file(path).splitlines()
-    starts = [index for index, line in enumerate(lines) if PHASE_HEADING.match(line)]
+    visible = _markdown_visibility(lines)
+    starts = [
+        index
+        for index, line in enumerate(lines)
+        if visible[index] and PHASE_HEADING.match(line)
+    ]
     if not starts:
         return RoadmapAnalysis(
-            (), (), None, (f"{path}: no phase heading found matching '^##\\s+Phase'",)
+            phases=(),
+            dispositions=(),
+            current=None,
+            lifecycle=None,
+            lifecycle_line=None,
+            is_complete=False,
+            errors=(f"{path}: no phase heading found matching '^##\\s+Phase'",),
         )
 
     phases: list[RoadmapPhase] = []
-    errors: list[str] = []
+    lifecycle, lifecycle_line, error_entries = _lifecycle_facts(
+        path, lines, visible, starts[0]
+    )
     seen_headings: dict[str, int] = {}
 
     for start in starts:
         end = next(
-            (index for index in range(start + 1, len(lines)) if SECTION_HEADING.match(lines[index])),
+            (
+                index
+                for index in range(start + 1, len(lines))
+                if visible[index] and SECTION_HEADING.match(lines[index])
+            ),
             len(lines),
         )
         heading = markdown_heading_text(lines[start]) or lines[start].removeprefix("##").strip()
@@ -292,6 +435,8 @@ def analyze_roadmap(path: Path) -> RoadmapAnalysis:
 
         status_declarations: list[tuple[int, str]] = []
         for index in range(start + 1, end):
+            if not visible[index]:
+                continue
             line = lines[index]
             line_number = index + 1
             if match := STATUS_FIELD.match(line):
@@ -377,10 +522,7 @@ def analyze_roadmap(path: Path) -> RoadmapAnalysis:
                     _phase_error(path, phase, heading_line, "has no valid top-level checkbox item"),
                 )
             )
-        errors.extend(message for _, message in sorted(phase_errors, key=lambda item: item[0]))
-
-    if errors:
-        return RoadmapAnalysis(tuple(phases), (), None, tuple(errors))
+        error_entries.extend(phase_errors)
 
     current = next(
         (
@@ -390,10 +532,25 @@ def analyze_roadmap(path: Path) -> RoadmapAnalysis:
         ),
         None,
     )
-    if current is None:
-        errors.append(
-            f"{path}: Roadmap exhausted: no non-deferred phase has an unchecked item; "
-            "re-cadence the Roadmap"
+    if not error_entries and lifecycle == "complete" and current is not None:
+        for phase in phases:
+            if not phase.is_deferred and phase.unchecked_count > 0:
+                error_entries.append(
+                    (
+                        lifecycle_line or 1,
+                        f"{path}:{lifecycle_line}: Roadmap lifecycle 'complete' contradicts "
+                        f"non-deferred unchecked phase '{phase.heading}' "
+                        f"(heading line {phase.heading_line}); remove the marker in the same "
+                        "human-authorized governed change that adds the phase",
+                    )
+                )
+    elif not error_entries and lifecycle is None and current is None:
+        error_entries.append(
+            (
+                len(lines) + 1,
+                f"{path}: Roadmap exhausted: no non-deferred phase has an unchecked item; "
+                "re-cadence the Roadmap",
+            )
         )
     dispositions = tuple(
         "deferred"
@@ -405,7 +562,47 @@ def analyze_roadmap(path: Path) -> RoadmapAnalysis:
         else "planned"
         for phase in phases
     )
-    return RoadmapAnalysis(tuple(phases), dispositions, current, tuple(errors))
+    errors = tuple(message for _, message in sorted(error_entries, key=lambda item: item[0]))
+    is_complete = lifecycle == "complete" and current is None and not errors
+    return RoadmapAnalysis(
+        phases=tuple(phases),
+        dispositions=dispositions,
+        current=current,
+        lifecycle=lifecycle,
+        lifecycle_line=lifecycle_line,
+        is_complete=is_complete,
+        errors=errors,
+    )
+
+
+def roadmap_projection(analysis: RoadmapAnalysis) -> dict[str, object]:
+    """Return the closed normalized projection consumed by deterministic gates."""
+    return {
+        "lifecycle": analysis.lifecycle,
+        "lifecycle_line": analysis.lifecycle_line,
+        "current": (
+            {
+                "heading": analysis.current.heading,
+                "heading_line": analysis.current.heading_line,
+            }
+            if analysis.current is not None
+            else None
+        ),
+        "is_complete": analysis.is_complete,
+        "phases": [
+            {
+                "heading": phase.heading,
+                "heading_line": phase.heading_line,
+                "status": phase.status if phase.status == "deferred" else None,
+                "status_line": phase.status_line,
+                "checked_count": phase.checked_count,
+                "unchecked_count": phase.unchecked_count,
+                "disposition": analysis.dispositions[index],
+            }
+            for index, phase in enumerate(analysis.phases)
+        ],
+        "diagnostics": list(analysis.errors),
+    }
 
 
 def check(specs_dir: Path) -> int:
@@ -431,15 +628,30 @@ def check(specs_dir: Path) -> int:
 
 
 def readiness_constraints(path: Path) -> list[str]:
-    """Every hard constraint must carry a non-empty verification."""
+    """Require the portable method baseline and hard-constraint verification."""
     text = read_text_file(path)
     blocks, _ = yaml_blocks(text)
     errors: list[str] = []
+    constraint_ids: set[str] = set()
     for index, (start_line, lines) in enumerate(blocks, start=1):
         values = parse_constraint_block(lines)
         name = values.get("id") or f"block {index} at line {start_line}"
+        if values.get("id"):
+            constraint_ids.add(values["id"])
         if values.get("severity") == "hard" and not values.get("verification", "").strip():
             errors.append(f"{path}: constraint {name}: hard constraint has no non-empty 'verification'")
+    missing = [
+        constraint_id
+        for constraint_id in REQUIRED_PORTABLE_CONSTRAINT_IDS
+        if constraint_id not in constraint_ids
+    ]
+    if missing:
+        errors.append(
+            f"{path}: missing portable Control Tower baseline constraint id(s): "
+            f"{', '.join(missing)}; copy the inherited baseline blocks from "
+            ".github/skills/bootstrap-tower/assets/constraints.md and keep product "
+            "constraints separate"
+        )
     return errors
 
 
@@ -483,7 +695,13 @@ def readiness(specs_dir: Path) -> int:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print(f"constitution ready for the loop: {specs_dir}")
+    if roadmap_analysis.is_complete:
+        print(
+            "constitution ready: Roadmap lifecycle complete; "
+            f"no current approved work: {specs_dir}"
+        )
+    else:
+        print(f"constitution ready for the loop: {specs_dir}")
     return 0
 
 
@@ -494,9 +712,24 @@ def current_phase(specs_dir: Path) -> int:
         for error in analysis.errors:
             print(error, file=sys.stderr)
         return 1
+    if analysis.is_complete:
+        print(
+            f"{specs_dir / 'roadmap.md'}: Roadmap complete: no current approved work; "
+            "human reopen requires removing '**Lifecycle:** complete' and adding a new "
+            "non-deferred phase with an unchecked item in one governed change",
+            file=sys.stderr,
+        )
+        return 1
     assert analysis.current is not None
     print(analysis.current.heading)
     return 0
+
+
+def print_roadmap_analysis(specs_dir: Path) -> int:
+    """Emit one normalized JSON projection and no human prose on stdout."""
+    analysis = analyze_roadmap(specs_dir / "roadmap.md")
+    print(json.dumps(roadmap_projection(analysis), sort_keys=True, separators=(",", ":")))
+    return 1 if analysis.errors else 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -526,6 +759,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="print the selected current Roadmap phase heading (no writes)",
     )
     parser.add_argument(
+        "--roadmap-analysis",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--force",
         action="store_true",
         help="overwrite existing files in scaffold mode",
@@ -540,9 +778,15 @@ def main(argv: list[str] | None = None) -> int:
     specs_dir = Path(args.specs_dir)
 
     try:
-        if args.current_phase and (args.check or args.readiness or args.force):
+        if (args.current_phase or args.roadmap_analysis) and (
+            args.check
+            or args.readiness
+            or args.force
+            or (args.current_phase and args.roadmap_analysis)
+        ):
             print(
-                "error: --current-phase cannot be used with --check/--readiness/--force",
+                "error: --current-phase/--roadmap-analysis cannot be combined with "
+                "--check/--readiness/--force or each other",
                 file=sys.stderr,
             )
             return 2
@@ -553,6 +797,8 @@ def main(argv: list[str] | None = None) -> int:
             return readiness(specs_dir) if args.readiness else check(specs_dir)
         if args.current_phase:
             return current_phase(specs_dir)
+        if args.roadmap_analysis:
+            return print_roadmap_analysis(specs_dir)
         return scaffold(specs_dir, args.force)
     except ToolError as exc:
         print(exc, file=sys.stderr)

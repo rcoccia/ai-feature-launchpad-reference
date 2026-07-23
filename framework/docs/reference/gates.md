@@ -34,7 +34,7 @@ build, test, lint, scan, and deployment checks remain product-native in either p
 | Gate | Constraint | Enforces | When | CI |
 |---|---|---|---|---|
 | `bootstrap-tower/scripts/scaffold_constitution.py --check` | `FUN-ROADMAP-01` plus shape | mission/constraints/roadmap are well-formed and the Roadmap has one eligible current phase | inception | `docs.yml` |
-| `scaffold_constitution.py --readiness` | `FUN-ROADMAP-01` plus inception readiness | shape plus hard verification, Mission Success content, and canonical Roadmap selection | inception, pre-loop | `docs.yml` |
+| `scaffold_constitution.py --readiness` | portable kernel baseline plus inception readiness | exact inherited baseline IDs, shape, hard verification, Mission Success content, and canonical Roadmap selection | inception, pre-loop | `docs.yml` |
 | `scaffold_constitution.py --current-phase` | `FUN-ROADMAP-01` | fully validates phase lifecycle and prints the exact current heading; malformed/exhausted blocks | planning | — (called by `plan-slice`) |
 
 ### The change loop

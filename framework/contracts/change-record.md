@@ -14,6 +14,13 @@ roadmap: "<exact canonical Phase heading>"
 
 Text records an attested command; it does not authenticate identity.
 
+When the governed diff adds or removes exact top-level Roadmap marker
+`**Lifecycle:** complete`, insert an optional second-level `Roadmap lifecycle authorization`
+section here containing only
+`**ADR:** constitution/decisions/ADR-YYYYMMDD-NN-lowercase-kebab-name.md`. The ADR must be newly
+added, accepted, and human-authorized in the same diff. After confirmation this reference is
+protected.
+
 ## Scope
 
 - <bounded scope>
@@ -56,16 +63,10 @@ Add this section only when a named load-bearing trigger requires the sibling
 
 Add this section only for triggered architecture and record the actual returned result after return.
 
-## Closeout
-
-Add before final review:
-
-| Disposition | Record |
-|---|---|
-| delivered | <scope-preserving delivered outcome> |
-| remaining | <approved remaining outcome or explicit none> |
-| discovered | <evidence-backed discovery or explicit none> |
-| evidence | <Roadmap/changelog evidence> |
+Before final review, add a second-level `Closeout` section with a
+`Disposition | Record` table containing exactly `delivered`, `remaining`, `discovered`, and
+`evidence` rows. Do not add the section while those records are still placeholders: confirmed work
+may remain incomplete, while reviewable work must carry concrete closeout.
 
 ## Independent final review
 

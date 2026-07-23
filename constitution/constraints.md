@@ -82,23 +82,25 @@ constraint:
 constraint:
   id: NFR-DOCS-01
   category: non_functional
-  statement: "Tracked Markdown is public-facing, valid UTF-8 without BOM, CRLF-normalized, and structurally well formed."
-  rationale: "The reference must remain portable, readable, and didactic for contributors replaying the method."
-  source: ["stakeholder"]
-  reference: []
-  applies_to: [requirements, design, planning, coding]
-  verification: "Run the documentation gate and review changed documentation for clear public teaching and accurate boundary language."
+  statement: "Tracked Markdown is UTF-8 without BOM, uses CRLF line endings, and has balanced code fences."
+  rationale: "The installed documentation workflow requires reproducible Markdown bytes."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Documentation-Gate","version":"kernel-2026-07-23","path":"framework/scripts/check_docs.py","sha256":"45f74482f6cf295f1d1fabef137d08815244d85a1f9aa5462b6d00764631870f"}]
+  applies_to: [coding]
+  verification: "framework/scripts/check_docs.py checks every tracked Markdown file"
   projection: ["framework/scripts/check_docs.py"]
-  residual: [{"id":"NFR-DOCS-01::didactic-quality","statement":"Confirm changed documentation is layered, public, clear, and does not overstate production readiness.","route":"review"}]
+  residual: []
+  metric: "BOM=0, LoneLF=0, balanced_fences=true"
   severity: hard
   status: active
 ```
 
 ## Inherited Control Tower governance
 
-The existing product `NFR-DOCS-01` also satisfies the installed kernel's documentation baseline.
-The following five inherited method laws complete the exact portable baseline without duplicating
-that product constraint.
+The documentation law above and the following five inherited method laws form the exact portable
+baseline. Three additional method-development laws apply because this governed refresh changes
+framework paths. Together they are nine method constraints; the four product constraints above
+remain unchanged.
 
 ```yaml
 constraint:
@@ -107,7 +109,7 @@ constraint:
   statement: "Every governed change has exactly one confirmed dated Change Record before implementation, with explicit outcome, Roadmap anchor, activated obligations, evidence, corrections, closeout, and the actual independent final verdict."
   rationale: "The installed Change Record kernel requires this exact locally resolvable obligation."
   source: ["normative_spec"]
-  reference: [{"source":"normative_spec","id":"Control-Tower-Change-Record-Contract","version":"kernel-2026-07-23","path":"framework/contracts/change-record.md","sha256":"26a4d6b94c96728b2af56fe56c6dcc18f3f575eac0fa84b861650eead282c1c6"}]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Change-Record-Contract","version":"kernel-2026-07-23","path":"framework/contracts/change-record.md","sha256":"69da6b2d235080ffcfaab8ca7057b9ed97ec31562128dabde08cc4a38c500f2b"}]
   applies_to: [planning, design, coding]
   verification: "framework/scripts/check_change_record.py validates the one-record branch contract; independent review judges obligation completeness and genuine confirmation"
   projection: ["framework/scripts/check_change_record.py"]
@@ -120,14 +122,14 @@ constraint:
 constraint:
   id: FUN-ROADMAP-01
   category: functional
-  statement: "The Roadmap uses canonical Phase sections: fully checked phases are delivered, the first non-deferred phase with an unchecked item is current, later eligible phases are planned, explicit deferred status is skipped, and exhaustion blocks for human re-cadence."
-  rationale: "Readiness and planning must consume one canonical lifecycle selector."
+  statement: "The Roadmap uses canonical Phase sections: fully checked phases are delivered, the first non-deferred phase with an unchecked item is current, later eligible phases are planned, and explicit deferred status is skipped. Optional top-level **Lifecycle:** complete is valid only when every non-deferred phase is delivered and means no currently approved work; without it, exhaustion blocks for human re-cadence. Human reopening removes the marker and atomically adds at least one new eligible unchecked phase; contradictory states block."
+  rationale: "Readiness, planning, and lifecycle transitions must consume one canonical analyzer without speculative backlog."
   source: ["normative_spec"]
-  reference: [{"source":"normative_spec","id":"Control-Tower-Operating-Model","version":"kernel-2026-07-23","path":"framework/doctrine/operating-model.md","sha256":"86fe07558f908d3ecad9abe281ce3a0e3b8a7aad63cd7c21c85b8044485eb797"}]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Operating-Model","version":"kernel-2026-07-23","path":"framework/doctrine/operating-model.md","sha256":"64b65e4bb117179a1f7afd11e9a4f9d8ca687526036f50ef2b36b118ad6c4152"}]
   applies_to: [planning, design, coding]
-  verification: ".github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness/--current-phase validates and selects canonical Roadmap state"
-  projection: [".github/skills/bootstrap-tower/scripts/scaffold_constitution.py"]
-  residual: [{"id":"FUN-ROADMAP-01::deferral-intent","statement":"Review confirms every deferral is human-authorized and still appropriate.","route":"review"}]
+  verification: ".github/skills/bootstrap-tower/scripts/scaffold_constitution.py --readiness/--current-phase and framework/scripts/check_change_record.py validate canonical Roadmap state and transitions"
+  projection: [".github/skills/bootstrap-tower/scripts/scaffold_constitution.py","framework/scripts/check_change_record.py"]
+  residual: [{"id":"FUN-ROADMAP-01::lifecycle-intent","statement":"Review confirms deferral, completion, and reopening are human-authorized and still appropriate; syntax and attestation prove neither identity nor strategic wisdom.","route":"review"}]
   severity: hard
   status: active
 ```
@@ -176,6 +178,57 @@ constraint:
   verification: "framework/scripts/check_autonomy.py requires a new ADR for Mission or Constraints changes; independent review judges genuine human authorization"
   projection: ["framework/scripts/check_autonomy.py"]
   residual: [{"id":"FUN-AUTONOMY-01::human-authorization","statement":"Review confirms the strategic decision recorded by the ADR was genuinely authorized by the human.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+## Method-development laws for this refresh
+
+```yaml
+constraint:
+  id: FUN-DETERMINISM-01
+  category: functional
+  statement: "Mechanically decidable lifecycle and Change Record rules live in scripts and gates rather than prose alone."
+  rationale: "The refreshed complete/reopen contract must fail closed through executable enforcement."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Manifesto","version":"tenets-1.0","path":"framework/doctrine/MANIFESTO.md","sha256":"87988d7afd8f1bd4931d250ee1fbcb7fbf8cc99aa52c16d18f0906eca19abcbb"}]
+  applies_to: [design, coding]
+  verification: "Run the synced Roadmap analyzer and Change Record gate lifecycle cases."
+  projection: [".github/skills/bootstrap-tower/scripts/scaffold_constitution.py","framework/scripts/check_change_record.py"]
+  residual: [{"id":"FUN-DETERMINISM-01::enforcement-boundary","statement":"Review confirms no mechanically decidable lifecycle rule remains prose-only.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: NFR-EVAL-01
+  category: non_functional
+  statement: "The refreshed deterministic lifecycle gates retain must-pass and must-block discrimination at 1.0."
+  rationale: "A lifecycle terminal state is safe only when complete, exhausted, contradictory, closeout, and reopen cases remain distinguishable."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Manifesto","version":"tenets-1.0","path":"framework/doctrine/MANIFESTO.md","sha256":"87988d7afd8f1bd4931d250ee1fbcb7fbf8cc99aa52c16d18f0906eca19abcbb"}]
+  metric: "gate_discrimination = correct_cases / total_cases == 1.0"
+  applies_to: [design, coding]
+  verification: "Run the full eval, regression, verification, and bootstrap suites from the exact source checkout plus every targeted check available in the copied LIGHT profile."
+  projection: []
+  residual: [{"id":"NFR-EVAL-01::source-suite-portability","statement":"Review confirms source-suite success and exact LIGHT byte equality preserve the promoted discrimination in this adopter.","route":"review"}]
+  severity: hard
+  status: active
+```
+
+```yaml
+constraint:
+  id: TEC-DOMAIN-01
+  category: technical
+  statement: "Copied Control Tower doctrine and lifecycle enforcement remain domain-agnostic and contain no Launchpad product semantics."
+  rationale: "The method refresh must remain portable while product-specific completion evidence stays in product-owned artifacts."
+  source: ["normative_spec"]
+  reference: [{"source":"normative_spec","id":"Control-Tower-Manifesto","version":"tenets-1.0","path":"framework/doctrine/MANIFESTO.md","sha256":"87988d7afd8f1bd4931d250ee1fbcb7fbf8cc99aa52c16d18f0906eca19abcbb"}]
+  applies_to: [design, coding]
+  verification: "Prove byte equality with the promoted LIGHT source and review changed method assets for domain-neutral vocabulary."
+  projection: []
+  residual: [{"id":"TEC-DOMAIN-01::doctrine-agnosticism","statement":"Review confirms copied method assets do not incorporate concrete Launchpad domain semantics.","route":"review"}]
   severity: hard
   status: active
 ```

@@ -14,7 +14,10 @@ never silent drift, never a patched gate, and never constitution-scale ceremony 
 - Drift, scope creep, or an eval regression appears
 - Any potentially material fact or semantic gap is discovered while coding (the spec←code arc)
 - The roadmap sequence no longer holds
-- **The roadmap is exhausted** — all phases are complete but work continues (a slice would have "no phase"); re-derive the next wave from the gap register (see the *Roadmap Re-cadence Rule* in `framework/doctrine/operating-model.md`)
+- **The Roadmap is accidentally exhausted** — all eligible phases are delivered without an explicit
+  completion marker, so re-cadence is required.
+- **A complete Roadmap must reopen** — a new human-approved requirement arrives after
+  `**Lifecycle:** complete`.
 
 Do **not** use it for routine next-slice planning (`plan-slice`), a failing test whose fix changes no
 confirmed semantics or boundary, or gating a fresh constitution (`inception-readiness`).
@@ -97,6 +100,12 @@ Roadmap changed:
 A correction that breaks constitution shape or coherence is not done. The gate proves only that
 checkpoint, not the semantic correctness of the new direction.
 
+For a complete Roadmap, reopening is one atomic human-authorized governed change: confirm a Change
+Record that anchors the newly approved phase, add its accepted ADR and exact
+`## Roadmap lifecycle authorization` reference, remove `**Lifecycle:** complete`, and add at least
+one new non-deferred phase with an unchecked item. Marker removal without eligible new work, or new
+work while retaining the marker, blocks. Never reopen automatically.
+
 ### 7. Record
 
 Record the reason in the artifacts that changed plus review/closeout and restart when present.
@@ -115,6 +124,8 @@ require a course-correction ADR merely because this Skill was invoked.
 - **Correct upstream, never the gate** (tenet 8): change the nearest authoritative artifact; never
   weaken a check or test to absorb drift.
 - **Mission or Constraints = human decision** (tenet 1): this Skill never rewrites them autonomously.
+- **Reopen is not ordinary re-cadence:** it requires the marker removal, new eligible phase,
+  confirmed lifecycle authorization, and newly accepted ADR in the same diff.
 - **A violated hard constraint is falsifiable** (C7): prefer constraint-anchored triggers over intuition; "gap discovered in coding" is an explicit trigger (the spec←code arc, C1), not silent invention.
 - **Reference, don't duplicate** (C11): the trigger taxonomy lives in design §6.1 — point to it, do not copy it into this skill.
 - **Domain-agnostic** (TEC-DOMAIN-01): no hardcoded domain names.

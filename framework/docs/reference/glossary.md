@@ -24,8 +24,10 @@ not a checklist of implementation tasks. Canonical sections begin `## Phase`: al
 checked is **delivered**; the first non-deferred phase with any unchecked item is **current**,
 including partial work; later eligible phases are **planned**. Optional `**Status:** deferred`
 keeps a human-postponed phase inspectable but excludes it from selection. With no eligible unchecked
-phase, the Roadmap is **exhausted** and must be re-cadenced. It lives in
-`constitution/roadmap.md`.
+phase, an unmarked Roadmap is **exhausted** and must be re-cadenced. Exact optional top-level
+`**Lifecycle:** complete` instead means every non-deferred phase is delivered and no work is
+currently approved: readiness remains valid, planning blocks, and a later human-authorized atomic
+reopen removes the marker while adding new eligible work. It lives in `constitution/roadmap.md`.
 
 ## Change Record
 

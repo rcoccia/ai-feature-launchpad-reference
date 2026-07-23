@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -21,8 +22,6 @@ DATED_RECORD = re.compile(r"^changes/\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\
 BASELINE = "changes/0000-control-tower-baseline.md"
 FULL_SHA = re.compile(r"\b[0-9a-f]{40}(?:[0-9a-f]{24})?\b")
 BASELINE_TRIGGER = "legacy-baseline-retirement"
-PHASE_HEADING = re.compile(r"^##\s+(.+?)\s*$")
-CHECKBOX_ITEM = re.compile(r"^\s*-\s+\[([ xX])\]\s+")
 BASELINE_OBLIGATIONS = {
     "FUN-CHANGE-01",
     "FUN-ROADMAP-01",
@@ -36,6 +35,44 @@ class DiffEntry:
     status: str
     old_path: str | None
     path: str
+
+
+@dataclass(frozen=True)
+class RoadmapPhaseProjection:
+    heading: str
+    heading_line: int
+    status: str | None
+    status_line: int | None
+    checked_count: int
+    unchecked_count: int
+    disposition: str
+
+    @property
+    def is_deferred(self) -> bool:
+        return self.status == "deferred"
+
+    @property
+    def is_delivered(self) -> bool:
+        return self.checked_count > 0 and self.unchecked_count == 0
+
+
+@dataclass(frozen=True)
+class RoadmapProjection:
+    lifecycle: str | None
+    lifecycle_line: int | None
+    current_heading: str | None
+    current_line: int | None
+    is_complete: bool
+    phases: tuple[RoadmapPhaseProjection, ...]
+    diagnostics: tuple[str, ...]
+
+    @property
+    def by_heading(self) -> dict[str, RoadmapPhaseProjection]:
+        return {phase.heading: phase for phase in self.phases}
+
+
+class RoadmapProjectionError(RuntimeError):
+    """The canonical analyzer could not supply a closed normalized projection."""
 
 
 def _git(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -101,81 +138,309 @@ def _git_text(base: str, relative: str) -> str | None:
     return result.stdout if result.returncode == 0 else None
 
 
-def _canonical_phase_from_text(text: str) -> tuple[str | None, str | None]:
-    script = (
-        Path(__file__).resolve().parents[2]
-        / ".github"
-        / "skills"
-        / "bootstrap-tower"
-        / "scripts"
-        / "scaffold_constitution.py"
-    )
+def _scaffold_script(root: Path) -> Path:
+    script = root / ".github" / "skills" / "bootstrap-tower" / "scripts" / "scaffold_constitution.py"
     if not script.is_file():
-        return None, f"canonical Roadmap selector is unavailable: {script}"
+        raise RoadmapProjectionError(f"canonical Roadmap analyzer is unavailable: {script}")
+    return script
+
+
+def _expect_keys(value: dict[str, object], expected: set[str], label: str) -> None:
+    missing = sorted(expected - value.keys())
+    unknown = sorted(value.keys() - expected)
+    if missing or unknown:
+        details = []
+        if missing:
+            details.append(f"missing {', '.join(missing)}")
+        if unknown:
+            details.append(f"unknown {', '.join(unknown)}")
+        raise RoadmapProjectionError(f"{label} has invalid field set: {'; '.join(details)}")
+
+
+def _parse_projection(raw: str, returncode: int) -> RoadmapProjection:
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RoadmapProjectionError(f"canonical Roadmap analyzer emitted malformed JSON: {exc.msg}") from exc
+    if not isinstance(value, dict):
+        raise RoadmapProjectionError("canonical Roadmap analyzer projection must be one JSON object")
+    _expect_keys(
+        value,
+        {
+            "lifecycle",
+            "lifecycle_line",
+            "current",
+            "is_complete",
+            "phases",
+            "diagnostics",
+        },
+        "Roadmap projection",
+    )
+    lifecycle = value["lifecycle"]
+    lifecycle_line = value["lifecycle_line"]
+    current = value["current"]
+    is_complete = value["is_complete"]
+    phases_raw = value["phases"]
+    diagnostics_raw = value["diagnostics"]
+    if lifecycle is not None and lifecycle != "complete":
+        raise RoadmapProjectionError("Roadmap projection lifecycle is not null or 'complete'")
+    if (
+        lifecycle_line is not None
+        and (type(lifecycle_line) is not int or lifecycle_line < 1)
+    ):
+        raise RoadmapProjectionError("Roadmap projection lifecycle_line is not an integer or null")
+    if type(is_complete) is not bool:
+        raise RoadmapProjectionError("Roadmap projection is_complete is not a boolean")
+    if not isinstance(phases_raw, list) or not isinstance(diagnostics_raw, list):
+        raise RoadmapProjectionError("Roadmap projection phases and diagnostics must be arrays")
+    if any(not isinstance(item, str) for item in diagnostics_raw):
+        raise RoadmapProjectionError("Roadmap projection diagnostics must contain only strings")
+    current_heading: str | None = None
+    current_line: int | None = None
+    if current is not None:
+        if not isinstance(current, dict):
+            raise RoadmapProjectionError("Roadmap projection current must be an object or null")
+        _expect_keys(current, {"heading", "heading_line"}, "Roadmap projection current")
+        if (
+            not isinstance(current["heading"], str)
+            or not current["heading"]
+            or type(current["heading_line"]) is not int
+            or current["heading_line"] < 1
+        ):
+            raise RoadmapProjectionError("Roadmap projection current fields have invalid types")
+        current_heading = current["heading"]
+        current_line = current["heading_line"]
+    phases: list[RoadmapPhaseProjection] = []
+    for index, item in enumerate(phases_raw, start=1):
+        if not isinstance(item, dict):
+            raise RoadmapProjectionError(f"Roadmap projection phase[{index}] must be an object")
+        _expect_keys(
+            item,
+            {
+                "heading",
+                "heading_line",
+                "status",
+                "status_line",
+                "checked_count",
+                "unchecked_count",
+                "disposition",
+            },
+            f"Roadmap projection phase[{index}]",
+        )
+        if (
+            not isinstance(item["heading"], str)
+            or not item["heading"]
+            or type(item["heading_line"]) is not int
+            or item["heading_line"] < 1
+            or (
+                item["status"] is not None
+                and item["status"] != "deferred"
+            )
+            or (
+                item["status_line"] is not None
+                and (
+                    type(item["status_line"]) is not int
+                    or item["status_line"] < 1
+                )
+            )
+            or type(item["checked_count"]) is not int
+            or item["checked_count"] < 0
+            or type(item["unchecked_count"]) is not int
+            or item["unchecked_count"] < 0
+            or not isinstance(item["disposition"], str)
+            or item["disposition"] not in {"deferred", "delivered", "current", "planned"}
+        ):
+            raise RoadmapProjectionError(
+                f"Roadmap projection phase[{index}] fields have invalid values or types"
+            )
+        phases.append(
+            RoadmapPhaseProjection(
+                heading=item["heading"],
+                heading_line=item["heading_line"],
+                status=item["status"],
+                status_line=item["status_line"],
+                checked_count=item["checked_count"],
+                unchecked_count=item["unchecked_count"],
+                disposition=item["disposition"],
+            )
+        )
+    if len({phase.heading for phase in phases}) != len(phases):
+        raise RoadmapProjectionError("Roadmap projection phase headings must be unique")
+    diagnostics = tuple(diagnostics_raw)
+    if is_complete and (
+        lifecycle != "complete"
+        or current is not None
+        or diagnostics
+    ):
+        raise RoadmapProjectionError("Roadmap projection complete state is internally inconsistent")
+    expected_returncode = 1 if diagnostics else 0
+    if returncode != expected_returncode:
+        raise RoadmapProjectionError(
+            "canonical Roadmap analyzer exit code disagrees with projection diagnostics"
+        )
+    return RoadmapProjection(
+        lifecycle=lifecycle,
+        lifecycle_line=lifecycle_line,
+        current_heading=current_heading,
+        current_line=current_line,
+        is_complete=is_complete,
+        phases=tuple(phases),
+        diagnostics=diagnostics,
+    )
+
+
+def _roadmap_projection(root: Path, constitution: Path) -> RoadmapProjection:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(_scaffold_script(root)),
+            "--roadmap-analysis",
+            str(constitution),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    if result.returncode not in {0, 1} or result.stderr:
+        detail = result.stderr.strip() or f"exit {result.returncode}"
+        raise RoadmapProjectionError(f"canonical Roadmap analyzer transport failed: {detail}")
+    return _parse_projection(result.stdout, result.returncode)
+
+
+def _roadmap_projection_from_text(root: Path, text: str) -> RoadmapProjection:
     with tempfile.TemporaryDirectory() as directory:
         constitution = Path(directory)
         (constitution / "roadmap.md").write_text(text, encoding="utf-8")
-        result = subprocess.run(
-            [
-                sys.executable,
-                "-B",
-                str(script),
-                "--current-phase",
-                str(constitution),
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-        )
-    if result.returncode != 0:
-        return None, result.stderr.strip() or "base Roadmap selector failed"
-    return result.stdout.strip(), None
+        return _roadmap_projection(root, constitution)
 
 
-def _phase_is_delivered(text: str, heading: str) -> bool:
-    lines = text.splitlines()
-    target = f"## {heading}"
-    starts = [index for index, line in enumerate(lines) if line == target]
-    if len(starts) != 1:
-        return False
-    start = starts[0]
-    end = next(
-        (
-            index
-            for index in range(start + 1, len(lines))
-            if PHASE_HEADING.fullmatch(lines[index])
-        ),
-        len(lines),
-    )
-    section = lines[start + 1 : end]
-    if any(line.strip() == "**Status:** deferred" for line in section):
-        return False
-    states = [
-        match.group(1).lower()
-        for line in section
-        if (match := CHECKBOX_ITEM.match(line))
-    ]
-    return bool(states) and all(state == "x" for state in states)
-
-
-def _roadmap_closeout_allowed(
-    root: Path, base: str, record: object, roadmap_heading: str
-) -> bool:
-    """Allow the anchored current phase to become delivered in this governed change."""
-    if record.status == "draft" or record.roadmap == roadmap_heading:
-        return False
-    base_text = _git_text(base, "constitution/roadmap.md")
-    candidate_path = root / "constitution" / "roadmap.md"
-    if base_text is None or not candidate_path.is_file():
-        return False
-    base_heading, error = _canonical_phase_from_text(base_text)
-    if error is not None or base_heading != record.roadmap:
-        return False
+def _canonical_phase(root: Path) -> tuple[str | None, str | None]:
+    """Return the valid current heading while allowing a valid complete Roadmap."""
     try:
-        candidate_text = candidate_path.read_text(encoding="utf-8")
+        projection = _roadmap_projection(root, root / "constitution")
+    except RoadmapProjectionError as exc:
+        return None, str(exc)
+    if projection.diagnostics:
+        return None, projection.diagnostics[0]
+    return projection.current_heading, None
+
+
+def _lifecycle_authorization_problems(
+    root: Path, record: object, entries: list[DiffEntry]
+) -> list[str]:
+    record_path = record.path
+    if record.status == "draft" or not record.roadmap_lifecycle_adr:
+        return [
+            f"{record_path}: Roadmap lifecycle transition requires confirmed "
+            "'Initial human confirmation' and a '## Roadmap lifecycle authorization' ADR"
+        ]
+    adr = record.roadmap_lifecycle_adr
+    if not any(entry.status == "A" and entry.path == adr for entry in entries):
+        return [
+            f"{record_path}: Roadmap lifecycle ADR must be newly added in the same "
+            f"governed change: {adr}"
+        ]
+    adr_path = root / Path(*PurePosixPath(adr).parts)
+    try:
+        text = adr_path.read_text(encoding="utf-8")
     except (OSError, UnicodeError):
-        return False
-    return _phase_is_delivered(candidate_text, record.roadmap)
+        return [f"{record_path}: Roadmap lifecycle ADR cannot be read: {adr}"]
+    if not any(line == "- **status:** accepted" for line in text.splitlines()):
+        return [f"{adr_path}: Roadmap lifecycle ADR must declare exact status 'accepted'"]
+    return []
+
+
+def _roadmap_transition_problems(
+    root: Path,
+    record: object,
+    entries: list[DiffEntry],
+    base: RoadmapProjection,
+    candidate: RoadmapProjection,
+) -> list[str]:
+    problems = [*candidate.diagnostics]
+    if base.diagnostics:
+        problems.extend(f"base Roadmap invalid: {item}" for item in base.diagnostics)
+        return problems
+
+    base_phase = base.by_heading.get(record.roadmap)
+    candidate_phase = candidate.by_heading.get(record.roadmap)
+    lifecycle_changed = base.lifecycle != candidate.lifecycle
+
+    if base.lifecycle == "complete" and candidate.lifecycle is None:
+        new_headings = set(candidate.by_heading) - set(base.by_heading)
+        eligible_new = [
+            phase
+            for heading, phase in candidate.by_heading.items()
+            if heading in new_headings
+            and not phase.is_deferred
+            and phase.unchecked_count > 0
+        ]
+        if not eligible_new:
+            problems.append(
+                f"{root / 'constitution' / 'roadmap.md'}: incomplete Roadmap reopen: "
+                "removing '**Lifecycle:** complete' requires at least one newly added "
+                "non-deferred phase with an unchecked item in the same governed change"
+            )
+        if candidate.current_heading != record.roadmap:
+            problems.append(
+                f"{record.path}: roadmap anchor '{record.roadmap}' does not match "
+                f"canonical current phase '{candidate.current_heading or '<none>'}'"
+            )
+        problems.extend(_lifecycle_authorization_problems(root, record, entries))
+        return problems
+
+    if base.lifecycle is None and candidate.lifecycle == "complete":
+        if (
+            base.current_heading != record.roadmap
+            or base_phase is None
+            or candidate_phase is None
+            or candidate_phase.is_deferred
+            or not candidate_phase.is_delivered
+            or not candidate.is_complete
+        ):
+            problems.append(
+                f"{record.path}: roadmap anchor '{record.roadmap}' does not satisfy "
+                "the intentional final-phase completion predicate"
+            )
+        problems.extend(_lifecycle_authorization_problems(root, record, entries))
+        return problems
+
+    if lifecycle_changed:
+        problems.append(
+            f"{record.path}: unsupported Roadmap lifecycle transition "
+            f"{base.lifecycle or '<absent>'} -> {candidate.lifecycle or '<absent>'}"
+        )
+
+    if candidate.current_heading == record.roadmap:
+        return problems
+    if (
+        base.current_heading == record.roadmap
+        and candidate_phase is not None
+        and not candidate_phase.is_deferred
+        and candidate_phase.is_delivered
+        and candidate.current_heading is not None
+    ):
+        return problems
+    if (
+        base.current_heading == record.roadmap
+        and candidate_phase is not None
+        and not candidate_phase.is_deferred
+        and candidate_phase.is_delivered
+        and candidate.current_heading is None
+        and candidate.lifecycle is None
+    ):
+        problems.append(
+            f"{root / 'constitution' / 'roadmap.md'}: final-phase closeout requires a "
+            "valid top-level '**Lifecycle:** complete' plus the confirmed human "
+            "authorization and ADR in the same governed change"
+        )
+        return problems
+    problems.append(
+        f"{record.path}: roadmap anchor '{record.roadmap}' does not match canonical "
+        f"current phase '{candidate.current_heading or '<none>'}'"
+    )
+    return problems
 
 
 def discover_record(base: str) -> tuple[str | None, str | None]:
@@ -323,7 +588,7 @@ def _required_obligations(
 def check(
     base: str,
     constraints: Path,
-    roadmap_heading: str | None = None,
+    _legacy_expected_heading: str | None = None,
 ) -> list[str]:
     root = _root()
     no_rename, error = _entries(base, detect_renames=False)
@@ -376,6 +641,24 @@ def check(
 
     old, old_problems = _parse_base_record(root, base, relative, constraints)
     problems.extend(old_problems)
+    base_roadmap_text = _git_text(base, "constitution/roadmap.md")
+    candidate_roadmap = root / "constitution" / "roadmap.md"
+    if base_roadmap_text is not None and candidate_roadmap.is_file():
+        base_projection = _roadmap_projection_from_text(root, base_roadmap_text)
+        candidate_projection = _roadmap_projection(root, candidate_roadmap.parent)
+        if old is None or old.status == "draft":
+            problems.extend(
+                _roadmap_transition_problems(
+                    root,
+                    record,
+                    no_rename,
+                    base_projection,
+                    candidate_projection,
+                )
+            )
+    elif (base_roadmap_text is None) != (not candidate_roadmap.is_file()):
+        problems.append("base and candidate must both contain constitution/roadmap.md")
+
     transition_old = old
     if record.status == "reviewed":
         target_record, target_problems = _reviewed_target_record(
@@ -423,16 +706,6 @@ def check(
                         "post-target path(s): "
                         + ", ".join(changed_outside_record)
                     )
-    if old is None or old.status == "draft":
-        if (
-            roadmap_heading is not None
-            and record.roadmap != roadmap_heading
-            and not _roadmap_closeout_allowed(root, base, record, roadmap_heading)
-        ):
-            problems.append(
-                f"{record_path}: roadmap anchor '{record.roadmap}' does not match "
-                f"canonical current phase '{roadmap_heading}'"
-            )
     if transition_old is not None:
         problems.extend(monotonic_problems(transition_old, record))
 
@@ -448,20 +721,6 @@ def check(
 
     _baseline_exception(root, record_path, no_rename, problems)
     return problems
-
-
-def _canonical_phase(root: Path) -> tuple[str | None, str | None]:
-    script = root / ".github" / "skills" / "bootstrap-tower" / "scripts" / "scaffold_constitution.py"
-    if not script.is_file() or not (root / "constitution" / "roadmap.md").is_file():
-        return None, None
-    result = subprocess.run(
-        [sys.executable, "-B", str(script), "--current-phase", str(root / "constitution")],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        return None, result.stderr.strip() or "canonical Roadmap selector failed"
-    return result.stdout.strip(), None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -480,12 +739,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"check_change_record: {exc}", file=sys.stderr)
         return 2
     base = _resolve_base(args.base)
-    heading, phase_error = _canonical_phase(root)
-    if phase_error:
-        print(f"check_change_record: {phase_error}", file=sys.stderr)
-        return 2
     constraints = args.constraints if args.constraints.is_absolute() else root / args.constraints
-    problems = check(base, constraints, heading)
+    try:
+        problems = check(base, constraints)
+    except RoadmapProjectionError as exc:
+        print(f"check_change_record: {exc}", file=sys.stderr)
+        return 2
     if problems:
         print("FUN-CHANGE-01 FAILED:", file=sys.stderr)
         for problem in problems:
