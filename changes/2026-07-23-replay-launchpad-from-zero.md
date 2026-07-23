@@ -109,6 +109,16 @@ This records an attestation of the command; it does not authenticate identity.
 | `TEC-IDB-01` | pass | Existing `docs/trust-boundary.md`, merged design target `ed91419236a01fafffa21760ed446b024b81f7b7`, and the new tutorial/evidence-chain boundary language explicitly identify caller-supplied headers as non-production and unauthenticated. |
 | `FUN-APR-01` | pass | The merged Phase 1 record and PR 3 publicly record the exact request lifecycle, stable architecture `SOUND`, and 28 passing integration cases that the tutorial requires the fresh replay to reconstruct. |
 | `NFR-CI-01` | pass | Product-owned CI run `29985547135` passed on correction target `94e705f764315998be0b3e237e937597e5dcd1ef`; the new docs require reconstruction of the unchanged locked restore/build/test workflow. |
+| `FUN-CHANGE-01` | pass | `python -B framework/scripts/check_change_record.py --base origin/main` passes with exactly this valid confirmed dated record, no companion, and no `specs/` path. |
+| `FUN-ROADMAP-01` | pass | Constitution readiness passes and the current-phase selector returns exact `Phase 2: Reproduce inception and feature from a fresh context`; the five-path branch diff does not modify the Roadmap. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passes all 57 tracked Markdown files, including README, this record, and the three new replay documents. |
+| `FUN-MERGE-01` | pass | `check_merge_ready.py --base origin/main` reaches the expected pre-review boundary: status remains `confirmed` and final returned verdict remains `pending`; no final reviewer or merge is claimed. |
+| `FUN-ARCHREVIEW-01` | pass | The branch changes only README, this record, and three replay documents; it adds no design companion, code, dependency, workflow, constitution, or load-bearing decision. |
+| `FUN-AUTONOMY-01` | pass | `python -B framework/scripts/check_autonomy.py --base origin/main` passes because Mission and Constraints are unchanged; provenance separately reports exactly 10 active constraints. |
+| `TEC-STK-01` | pass | Unchanged locked product restore and zero-warning/error Release build pass on .NET SDK 10.0.302; the tutorial's `globaljson` and `sln --format sln` options were verified against that SDK. |
+| `TEC-IDB-01` | pass | All 28 unchanged integration cases pass, including identity-warning and Production-startup safeguards; the new tutorial and evidence chain preserve the explicit non-production boundary. |
+| `FUN-APR-01` | pass | All 28 unchanged integration cases pass locally with no failures or skips, proving the merged approval, terminal refusal-audit, persistence, reload, and concurrency evidence remains intact. |
+| `NFR-CI-01` | pass | Product workflow and dependencies are absent from the five-path branch diff; locked restore, Release build, 28 tests, and transitive vulnerability scan all pass locally. |
 
 ## Corrections
 
