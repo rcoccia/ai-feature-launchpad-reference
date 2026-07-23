@@ -1,6 +1,6 @@
 ---
 change: "adopt-kernel-baseline-constraints"
-status: "confirmed"
+status: "reviewed"
 roadmap: "Phase 1: Govern one AI-feature launch request"
 ---
 
@@ -119,4 +119,81 @@ This records an attestation of the command; it does not authenticate identity.
 
 ## Independent final review
 
-**Returned verdict:** `pending`
+**Returned verdict:** `PROMOTE`
+
+### Attempt 1
+
+**Reviewer/date:** Reviewer Agent, 2026-07-23
+
+**Reviewed target:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Remote:** `origin`
+
+**Ref:** `refs/heads/rcoccia-adopt-kernel-baseline-constraints`
+
+**Start local head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Start tracking head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Start remote head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Start PR head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Completion local head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Completion tracking head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Completion remote head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Completion PR head:** `89c6f9abdec86c214a8445561c7f73449c25dcd9`
+
+**Stability:** `STABLE`
+
+**Returned verdict:** `PROMOTE`
+
+**Gates:** PASS: Change Record gate, review pre-check, documentation gate for 47 tracked Markdown
+files, autonomy with ADR-02, provenance for 10 active constraints, pinned constitution readiness, and
+exact current `Phase 1: Govern one AI-feature launch request`. Before this return was recorded,
+merge readiness blocked only on confirmed status and final verdict PENDING. PR 2 CI had green docs,
+autonomy, and provenance; merge-ready was expectedly red only at the governed-merge step.
+
+**Evidence:** The independent readiness judgment found the constitution THIN and coherent with exact
+baseline IDs `FUN-CHANGE-01`, `FUN-ROADMAP-01`, `NFR-DOCS-01`, `FUN-MERGE-01`,
+`FUN-ARCHREVIEW-01`, and `FUN-AUTONOMY-01`; exact active set 10; and no `FUN-GOV-01`. The five
+locally pinned inherited definitions resolve to `framework/contracts/change-record.md`
+`26a4d6b94c96728b2af56fe56c6dcc18f3f575eac0fa84b861650eead282c1c6`,
+`framework/doctrine/operating-model.md`
+`86fe07558f908d3ecad9abe281ce3a0e3b8a7aad63cd7c21c85b8044485eb797`,
+`framework/scripts/check_merge_ready.py`
+`588759968c5493d5a79e374fccfd373e187781103d9bd1e0519c9719b3548925`,
+`.github/skills/architecture-review/SKILL.md`
+`bdc295bc8014172fed1ca9f7ecb6f9c9bb4cf27d626fab34a3881a85176f3005`, and
+`framework/scripts/check_autonomy.py`
+`e577e4b7b5f623c3106920ce4593eca5df6a9a0bf8dbf20423786aff375f25b7`.
+Mission and Roadmap are unchanged, with no deferral. The final diff contains only `CHANGELOG.md`,
+this Change Record, `constitution/constraints.md`, and ADR-02; `.github/`, `framework/`, README,
+LICENSE, Mission, and Roadmap are unchanged. There is no product code, kit sync, method development,
+`specs/`, or cache artifact. All 56 LIGHT assets are byte-identical to the original
+`eef68510e89bee1d16b0425dbc71c603e3e35c96` adoption. Commit
+`d7c57220b5bd4850672a95d68426ad2c795974cb` records the byte-exact `ff77efa` refresh attempt, and
+`01c6e10407c2174ee024726dff0cb9ec4bc1ebc1` restores the pinned boundary without rewriting history;
+`ff77efa7d7983b2eabde9baccf1d35e38c4692fb` and
+`08c481f5afaf2c8ae196812c00f003b10190bda3` remain accurately identified as external field
+feedback.
+
+**Summary:** No findings. Constitution readiness is PASS and the Change Record verdict is PROMOTE.
+The five activated obligations pass. Product constraints `TEC-STK-01`, `TEC-IDB-01`,
+`FUN-APR-01`, and `NFR-CI-01` are correctly not activated because no product behavior or code
+changes. `FUN-ARCHREVIEW-01` is present but not activated because no load-bearing design is
+introduced. The reviewed target is stable and ready for the governed merge gate and separate human
+merge authorization.
+
+**Findings:** none.
+
+| Residual | Disposition | Notes |
+|---|---|---|
+| `NFR-DOCS-01::didactic-quality` | covered | The public record distinguishes the pinned product kit, attempted refresh, corrective commit, and external method feedback without overstating product or production readiness. |
+| `FUN-CHANGE-01::obligation-completeness-and-confirmation` | covered | Exactly one confirmed Change Record governed the correction; all material obligations and correction evidence are present, and delegated confirmation is recorded as attestation rather than authenticated identity. |
+| `FUN-ROADMAP-01::deferral-intent` | covered | No phase was deferred or reprioritized; Phase 1 remains exact, current, unchanged, and wholly unchecked. |
+| `FUN-MERGE-01::review-genuineness` | covered | One producer owned the branch and local, tracking, remote, and PR heads remained equal to the reviewed target throughout; this PROMOTE records the actual independent return and preserves human merge authorization. |
+| `FUN-AUTONOMY-01::human-authorization` | covered | ADR-02 records the explicit delegated human decision for the Constraints correction without claiming identity authentication; Mission and Roadmap were not changed. |
