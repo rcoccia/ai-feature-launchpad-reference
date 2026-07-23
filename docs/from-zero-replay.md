@@ -100,9 +100,14 @@ Create only:
 - the inception ADR required for the confirmed Mission and Constraints.
 
 The Mission stays strategy-level: one launch-approval reference, its users, observable success, and
-the explicit non-goals. The Roadmap initially has exactly Phase 1:
+the explicit non-goals. Reproduce the confirmed two-phase Roadmap:
 
 `Phase 1: Govern one AI-feature launch request`
+
+`Phase 2: Reproduce inception and feature from a fresh context`
+
+At inception, Phase 1 is current and unchecked. Phase 2 is planned and unchecked. This planned second
+phase prevents Roadmap exhaustion when the Phase 1 delivery is truthfully closed.
 
 The Constraints artifact contains exactly these ten active laws:
 
@@ -119,9 +124,9 @@ The Constraints artifact contains exactly these ten active laws:
 | `FUN-APR-01` | Pending, actor separation, terminal rejection, and append-only attempt evidence. |
 | `NFR-CI-01` | Product behavior is proven by integration tests in product-owned GitHub Actions CI. |
 
-Use the public `constitution/mission.md`, `constitution/constraints.md`, and inception ADR only as
-post-authoring semantic comparisons. Do not copy them into the target. Phase 2 belongs to the public
-reference's replay governance and is not a product phase in the disposable reconstruction.
+Use the public `constitution/mission.md`, `constitution/constraints.md`, `constitution/roadmap.md`,
+and inception ADR only as post-authoring semantic comparisons. Do not copy them into the target.
+Phase 2 is a planned reproducibility phase in the disposable Roadmap, not another product capability.
 
 Gate inception:
 
@@ -144,10 +149,10 @@ git commit -m "Bootstrap AI Feature Launchpad inception"
 git tag replay-inception
 ```
 
-Expected checkpoint: readiness is `PASS`, provenance reports ten active constraints, and the selector
-prints the exact Phase 1 heading.
+Expected checkpoint: readiness is `PASS`, provenance reports ten active constraints, the selector
+prints the exact Phase 1 heading, and planned Phase 2 remains unchecked.
 
-## 3. Confirm one Phase 1 Change Record before code
+## 3. Confirm the sole local delivery Change Record before code
 
 Invoke `plan-slice`. Use the confirmed semantics and exact current Roadmap item. Create exactly:
 
@@ -161,7 +166,8 @@ human confirmation as an attested command that does not authenticate identity, t
 
 The canonical public Phase 1 record is a lifecycle example, not a record to copy. Its sequence is:
 confirmed plan, design, stable architecture `SOUND`, implementation attempts, append-only corrections,
-closeout, independent final-review attempts, actual `PROMOTE`, and human merge.
+closeout, independent final-review attempts, actual `PROMOTE`, and human merge. The disposable replay
+creates no second Change Record for Phase 2: its external replay report is Phase 2 evidence.
 
 ```powershell
 python -B framework\scripts\check_change_record.py --base replay-inception
@@ -271,14 +277,18 @@ no vulnerable package.
 ## 7. Reach review-ready and stop
 
 Append every implementation and correction attempt to the Change Record; never replace earlier
-evidence. Run `record-closeout`, check the delivered Phase 1 Roadmap item, generate the deterministic
-changelog, and leave the record `confirmed` with independent final verdict `pending`.
+evidence. Run `record-closeout`, truthfully check the delivered Phase 1 Roadmap item, generate the
+deterministic changelog, and leave the Phase 1 record historically anchored to its exact Phase 1
+heading with status `confirmed` and independent final verdict `pending`. Phase 2 then becomes current
+and remains unchecked.
 
 Run the local pre-review gates:
 
 ```powershell
 python -B .github\skills\bootstrap-tower\scripts\scaffold_constitution.py `
   --readiness constitution
+python -B .github\skills\bootstrap-tower\scripts\scaffold_constitution.py `
+  --current-phase constitution
 python -B framework\scripts\check_change_record.py --base replay-inception
 python -B framework\scripts\check_docs.py
 python -B framework\scripts\check_autonomy.py --base replay-inception
@@ -290,9 +300,15 @@ git diff --check replay-inception..HEAD
 git status --short
 ```
 
-`check_merge_ready.py` must still fail only because the record is `confirmed` and the independent
-final verdict is `pending`. That is the correct review-ready boundary, not a failed replay.
+Readiness must remain green and the selector must print exact
+`Phase 2: Reproduce inception and feature from a fresh context`. The Change Record gate still finds
+the sole Phase 1 record and accepts its historical Phase 1 Roadmap anchor.
 
-Do not invoke the final Reviewer Agent, create a second GitHub repository or PR, merge, deploy, or
-check Phase 2. Record the replay measurements described in
-[Operational replay](replay-operations.md), send the result to the parent, and stop.
+`check_merge_ready.py` must still fail only because the Phase 1 record is `confirmed` and the
+independent final verdict is `pending`. That is the correct review-ready boundary, not a failed
+replay.
+
+Do not implement or close local Phase 2, create a second replay Change Record, invoke the final
+Reviewer Agent, create a second GitHub repository or PR, merge, or deploy. Record the replay
+measurements described in [Operational replay](replay-operations.md), send that external Phase 2
+evidence to the parent, and stop.

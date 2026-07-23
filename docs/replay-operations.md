@@ -22,16 +22,17 @@ inspect private conversation history or copy product source/tests from the publi
 |---|---|---|
 | Start | Target is an empty initialized Git repository; source branch and resolved head are recorded. | start timestamp, paths, branch head |
 | LIGHT | Installer copies the LIGHT profile and no constitution or product is seeded. | command, copied/preserved counts |
-| Inception | Mission, Constraints, Roadmap, and inception ADR are authored from confirmed semantics. | artifact list, readiness verdict |
+| Inception | Mission, Constraints, the two-phase Roadmap, and inception ADR are authored from confirmed semantics; Phase 1 is current and Phase 2 is planned. | artifact list, readiness verdict |
 | Constraint set | Six inherited and four product laws are active, for ten total. | provenance output |
-| Plan | Exactly one confirmed Phase 1 Change Record exists before design or code. | record path, confirmation text, gate |
+| Plan | The sole local delivery record is one confirmed Phase 1 Change Record before design or code. | record path, confirmation text, gate |
 | Design | One named companion resolves state/audit and identity boundaries. | design commit/ref |
 | Architecture | Independent no-edit challenge returns fresh stable `SOUND`. | reviewer, target SHA, result |
 | Product | .NET 10 Minimal API, direct SQLite, integration tests, workflow, and public docs exist. | changed paths |
 | Product proof | Locked restore, zero-warning Release build, 28 tests, and vulnerability scan pass. | command outputs, durations |
-| Governance proof | Readiness, Change Record, docs, autonomy, provenance, and review pre-check pass. | gate outputs |
+| Roadmap advance | Phase 1 is truthfully checked at closeout; readiness stays green and the selector advances to exact Phase 2. | Roadmap diff, readiness and selector outputs |
+| Governance proof | The historical Phase 1 Change Record plus readiness, docs, autonomy, provenance, and review pre-check pass. | gate outputs |
 | Boundary | Merge readiness fails only on `confirmed` / final verdict `pending`. | expected failure |
-| Exit | Local target is clean and review-ready; Phase 2 remains unchecked. | end timestamp, HEAD |
+| Exit | Local target is clean and review-ready; Phase 2 is current and unchecked, with no second local Change Record. | end timestamp, HEAD |
 
 ## Escalation rule
 
@@ -86,5 +87,7 @@ a successful replay.
 
 The replay is complete only when all required local gates and product proof pass, the working tree is
 clean, and merge readiness has the single expected `confirmed` / `pending` boundary. Stop before final
-review. The main reference's merged PR 3 supplies GitHub review and merge proof; the disposable replay
-does not duplicate it.
+review. The sole local Change Record remains anchored to delivered Phase 1. Do not create a Phase 2
+Change Record or close Phase 2: the retained external replay report is its evidence. The main
+reference's merged PR 3 supplies GitHub review and merge proof; the disposable replay does not
+duplicate it.

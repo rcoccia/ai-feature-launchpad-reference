@@ -60,6 +60,12 @@ The public reference proves one complete intent-to-merge chain. Phase 2 asks a d
 are the public docs sufficient for an uninvolved agent to reconstruct the same governed feature from
 zero and reach review-ready?
 
-A successful replay adds reproducibility evidence; it does not add a second product capability,
-production assurance, cloud repository, final reviewer verdict, or merge. Until that measured replay
-passes and is recorded, the Phase 2 Roadmap item remains unchecked.
+The disposable reconstruction mirrors the reference's two-phase Roadmap. Its sole local delivery
+record remains historically anchored to Phase 1. Once Phase 1 is truthfully checked at closeout,
+readiness stays green and the selector advances to the planned, unchecked Phase 2 instead of reporting
+Roadmap exhaustion.
+
+A successful replay adds external reproducibility evidence; it does not require a second local
+Change Record, implement or close local Phase 2, or add a second product capability, production
+assurance, cloud repository, final reviewer verdict, or merge. Until that measured replay passes and
+is recorded by the parent reference, the Phase 2 Roadmap item remains unchecked.

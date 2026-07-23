@@ -119,10 +119,21 @@ This records an attestation of the command; it does not authenticate identity.
 | `TEC-IDB-01` | pass | All 28 unchanged integration cases pass, including identity-warning and Production-startup safeguards; the new tutorial and evidence chain preserve the explicit non-production boundary. |
 | `FUN-APR-01` | pass | All 28 unchanged integration cases pass locally with no failures or skips, proving the merged approval, terminal refusal-audit, persistence, reload, and concurrency evidence remains intact. |
 | `NFR-CI-01` | pass | Product workflow and dependencies are absent from the five-path branch diff; locked restore, Release build, 28 tests, and transitive vulnerability scan all pass locally. |
+| `FUN-ROADMAP-01` | pass | Fresh replay blocker correction: README and all three replay guides now reproduce both confirmed Roadmap phases. On the PR branch, readiness passes and current selection returns exact Phase 2; the tutorial requires the same green transition after truthful Phase 1 closeout. |
+| `FUN-CHANGE-01` | pass | Fresh correction evidence: the disposable replay creates only the historically Phase 1-anchored delivery record, and its external Phase 2 report requires no second local record. The branch Change Record gate passes and `review_slice.py` now reports this confirmed Phase 2 record reviewable. |
+| `NFR-DOCS-01` | pass | Fresh correction evidence: the documentation gate passes all 57 tracked Markdown files after removing the Roadmap-exhaustion contradiction and recording the blocker verbatim. |
+| `TEC-STK-01` | pass | Fresh non-regression evidence: locked restore and zero-warning/error Release build pass after the docs-only correction. |
+| `FUN-APR-01` | pass | Fresh non-regression evidence: all 28 unchanged integration cases pass with zero failed or skipped after the docs-only correction. |
 
 ## Corrections
 
-`pending`
+- **Fresh replay blocker (2026-07-23):** "Current tutorial incorrectly requires exactly one Phase1, requires checking it delivered, forbids local Phase2, then requires readiness/current/change gates green—impossible because Roadmap exhausted." This is a `gap-in-coding` slice correction: the
+  observable Phase 2 outcome, active constraints, dependencies, and existing SOUND feature design
+  remain unchanged. README, tutorial, operational checklist, and evidence-chain guidance now require
+  the confirmed two-phase Roadmap. The sole disposable Change Record remains historically anchored to
+  Phase 1; truthful Phase 1 closeout advances readiness/current selection to planned, unchecked Phase
+  2; no second local replay Change Record or Phase 2 implementation/closeout is required. Prior
+  Roadmap-instruction evidence is stale and superseded only by the append-only evidence below.
 
 ## Closeout
 

@@ -28,7 +28,9 @@ The product is intentionally narrow:
 The replay starts in an empty disposable local Git repository. Its method source and instructions
 come from public branch `refs/heads/rcoccia-phase2-replay-docs` in
 `https://github.com/rcoccia/ai-feature-launchpad-reference`; merged feature baseline
-`0a700178269acdf284c14c9033577857357c3dd3` remains the fixed product reference.
+`0a700178269acdf284c14c9033577857357c3dd3` remains the fixed product reference. The disposable
+Roadmap reproduces both confirmed phases: Phase 1 is delivered locally, then Phase 2 becomes current
+and stays unchecked because the replay report is external evidence rather than a second local slice.
 
 ## Run locally
 
