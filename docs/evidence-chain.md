@@ -18,6 +18,7 @@ artifact and executable evidence. The chain is not a production certification.
 | Executable proof | `tests/Launchpad.Api.IntegrationTests/` | 28 integration cases over behavior, persistence, audit, concurrency, and identity warnings. |
 | Product CI | `.github/workflows/product-ci.yml` | Locked restore, Release build, and tests in product-owned CI. |
 | Product contract | `README.md`, `docs/api.md`, `docs/trust-boundary.md` | Run instructions, exact nested request/audit JSON with decision/event timestamps, and explicit non-production identity boundary. |
+| Replay proof | `docs/replay-evidence.md` | Fresh no-remote reconstruction from empty repository through the all-green local review-ready boundary. |
 | Final judgment | Phase 1 Change Record, `Independent final review` | Append-only BLOCK corrections followed by actual stable `PROMOTE`. |
 | Merge proof | PR 3 and merge commit `0a700178269acdf284c14c9033577857357c3dd3` | Human-controlled GitHub merge of the reviewed reference feature. |
 
@@ -67,5 +68,8 @@ Roadmap exhaustion.
 
 A successful replay adds external reproducibility evidence; it does not require a second local
 Change Record, implement or close local Phase 2, or add a second product capability, production
-assurance, cloud repository, final reviewer verdict, or merge. Until that measured replay passes and
-is recorded by the parent reference, the Phase 2 Roadmap item remains unchecked.
+assurance, cloud repository, final reviewer verdict, or merge. The measured replay passed, but the
+Phase 2 Roadmap item remains unchecked pending the separately governed lifecycle-contract adoption.
+
+The measured result is published in [Fresh-context replay evidence](replay-evidence.md). It proves
+reproducibility through review-ready while deliberately leaving Phase 2 unchecked.

@@ -92,6 +92,7 @@ X-Reference-Authentication-Warning: NON-PRODUCTION; caller-supplied headers are 
 - [Trusted-header boundary](docs/trust-boundary.md)
 - [From-zero replay tutorial](docs/from-zero-replay.md)
 - [Operational replay checklist](docs/replay-operations.md)
+- [Fresh-context replay evidence](docs/replay-evidence.md)
 - [Intent-to-merge evidence chain](docs/evidence-chain.md)
 - [Canonical governed change](changes/2026-07-23-govern-ai-feature-launch.md)
 

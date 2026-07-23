@@ -128,6 +128,16 @@ This records an attestation of the command; it does not authenticate identity.
 | `FUN-APR-01` | fail | The same replay found the tutorial's generic instruction to use exact JSON insufficient to reconstruct the nested request/audit DTOs and per-decision timestamps without ambiguity. |
 | `FUN-ROADMAP-01` | pass | Correction attempt: the tutorial and checklist now require both confirmed phases at inception, preserve the Phase 1 record's historical anchor, advance to current unchecked Phase 2 after truthful Phase 1 closeout, and explicitly require no second local Change Record. |
 | `FUN-APR-01` | pass | Correction attempt: the design and implementation checklists now route field-by-field reconstruction to the exact nested request and audit examples in `docs/api.md`, explicitly naming approval/rejection `recordedAtUtc` and audit-event `occurredAtUtc` without copying product source. |
+| `FUN-CHANGE-01` | pass | Final replay evidence: no-remote local target `9c12fb06ce3f6589fee7183fdcdd49a15df602cf` contained one confirmed historically Phase 1-anchored record before code; its review pre-check passed after closeout and no second Phase 2 record was created. |
+| `FUN-ROADMAP-01` | pass | Final replay evidence: THIN inception created both confirmed phases; after truthful Phase 1 closeout, readiness remained green and current selection returned exact unchecked Phase 2. The public Roadmap remains unchanged and current. |
+| `NFR-DOCS-01` | pass | Final replay evidence: `docs/replay-evidence.md` publishes a self-contained summary from report/Git provenance; the replay's docs gate passed and its final 82-file target had no residue. |
+| `FUN-MERGE-01` | pass | Final replay evidence: the disposable target reached review-ready and merge readiness stopped only on the historical Phase 1 record's `confirmed` status and `pending` final verdict; no final Reviewer or merge ran. |
+| `FUN-ARCHREVIEW-01` | pass | Final replay evidence: the initial design was corrected for nested JSON and per-decision timestamps, then received a fresh stable `SOUND` before corrected product work; PR5 itself still adds no load-bearing design. |
+| `FUN-AUTONOMY-01` | pass | Final replay evidence: Mission and Constraints remained within the confirmed semantics, autonomy passed, and provenance resolved exactly ten active constraints. |
+| `TEC-STK-01` | pass | Final replay evidence: locked restore passed, .NET 10 Release build completed with zero warnings/errors, and the no-remote reconstruction used direct file-backed SQLite. |
+| `TEC-IDB-01` | pass | Final replay evidence: reconstructed docs/tests preserved the non-production trusted-header warning and boundary; final product proof remained green. |
+| `FUN-APR-01` | pass | Final replay evidence: 28 integration tests passed with zero failures/skips after the corrected design and nested JSON implementation; request/audit contract checks rejected flattened internal fields. |
+| `NFR-CI-01` | pass | Final replay evidence: the reconstructed product-owned CI contract used locked restore, Release build, and tests; local proof passed and the vulnerability scan found no vulnerable package. |
 
 ## Corrections
 
@@ -146,15 +156,26 @@ This records an attestation of the command; it does not authenticate identity.
   field-by-field authority, including approval/rejection `recordedAtUtc` and event `occurredAtUtc`,
   without copying or changing product source. Phase 2 remains current and unchecked; this record
   remains `confirmed` with final review pending.
+- **Successful replay completion (2026-07-23):** the replay consumed source sequence
+  `a29b507bd435f3128ad637c312aaf23ce947ca8d` ->
+  `c77afc2cd745e86f3a6ef8e652a30da1f10e57a8` ->
+  `3796075cdddbf5358f4ba3e0659aca81af83a1b8` and froze no-remote local target
+  `9c12fb06ce3f6589fee7183fdcdd49a15df602cf` after 109.27 minutes. LIGHT copied 56
+  files; THIN inception/readiness and ten-constraint provenance passed; the one Phase 1 record,
+  corrected design, fresh `SOUND`, locked restore, zero-warning/error build, 28 tests, vulnerability
+  scan, final Phase 2 selector, governance gates, review pre-check, and 82-file hygiene all passed.
+  One Roadmap blocker used the parent message route; `ask_user` was never used. Public
+  `docs/replay-evidence.md` is the self-contained evidence summary. This correction closes the
+  documentation/reconstruction evidence target only; it does not check Phase 2 or prewrite review.
 
 ## Closeout
 
 | Disposition | Record |
 |---|---|
-| delivered | Not closed: documentation publication and the fresh replay must complete first. |
-| remaining | Documentation publication, fresh replay, measured evidence, Phase 2 closure, and final review remain pending. |
-| discovered | No replay discovery is claimed by documentation authoring alone; fresh observations remain outstanding. |
-| evidence | No closeout evidence exists yet; it requires the published branch, replay report, and scope-preserving Roadmap/changelog record. |
+| delivered | Layered public documentation at source target `3796075cdddbf5358f4ba3e0659aca81af83a1b8` enabled successful fresh no-remote reconstruction through the all-green local review-ready boundary at `9c12fb06ce3f6589fee7183fdcdd49a15df602cf`; `docs/replay-evidence.md` publishes the measured proof. This delivers the docs/reconstruction evidence target without marking Roadmap Phase 2 delivered. |
+| remaining | Product Roadmap Phase 2 remains current and unchecked until separate human-authorized adoption of the newly promoted `Lifecycle: complete` contract. That is a known separately governed remaining outcome, not hidden failure; no speculative Phase 3 is added. Independent final review, actual-verdict recording, and human merge authorization for PR5 also remain pending. |
+| discovered | The terminal-Roadmap gap drove Control Tower ADR 49 and PR 59, merged at `471071e`; applying the promoted lifecycle contract to this public reference is outside PR5. The nested request/audit JSON ambiguity was corrected in public source `3796075cdddbf5358f4ba3e0659aca81af83a1b8`. |
+| evidence | The 109.27-minute replay installed 56 LIGHT files, passed THIN inception/readiness and ten-constraint provenance, used one Phase 1 record, corrected and freshly re-challenged architecture to `SOUND`, passed locked restore, a zero-warning/error Release build, 28 tests, and a clean vulnerability scan, advanced to exact current Phase 2 with review-ready gates green, and froze 82 tracked files with no residue at `9c12fb06ce3f6589fee7183fdcdd49a15df602cf`. `CHANGELOG.md` was updated deterministically and the helper was byte-idempotent. |
 
 ## Independent final review
 
