@@ -17,7 +17,7 @@ artifact and executable evidence. The chain is not a production certification.
 | Implementation | `src/Launchpad.Api/` | .NET 10 Minimal API and direct file-backed SQLite implementation. |
 | Executable proof | `tests/Launchpad.Api.IntegrationTests/` | 28 integration cases over behavior, persistence, audit, concurrency, and identity warnings. |
 | Product CI | `.github/workflows/product-ci.yml` | Locked restore, Release build, and tests in product-owned CI. |
-| Product contract | `README.md`, `docs/api.md`, `docs/trust-boundary.md` | Run instructions, exact HTTP behavior, and explicit non-production identity boundary. |
+| Product contract | `README.md`, `docs/api.md`, `docs/trust-boundary.md` | Run instructions, exact nested request/audit JSON with decision/event timestamps, and explicit non-production identity boundary. |
 | Final judgment | Phase 1 Change Record, `Independent final review` | Append-only BLOCK corrections followed by actual stable `PROMOTE`. |
 | Merge proof | PR 3 and merge commit `0a700178269acdf284c14c9033577857357c3dd3` | Human-controlled GitHub merge of the reviewed reference feature. |
 

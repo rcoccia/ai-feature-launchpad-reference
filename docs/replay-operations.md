@@ -26,6 +26,7 @@ inspect private conversation history or copy product source/tests from the publi
 | Constraint set | Six inherited and four product laws are active, for ten total. | provenance output |
 | Plan | The sole local delivery record is one confirmed Phase 1 Change Record before design or code. | record path, confirmation text, gate |
 | Design | One named companion resolves state/audit and identity boundaries. | design commit/ref |
+| JSON contract | Design and DTOs match the nested request and audit examples in `docs/api.md`, including per-decision `recordedAtUtc` and per-event `occurredAtUtc`. | field-by-field checklist and contract tests |
 | Architecture | Independent no-edit challenge returns fresh stable `SOUND`. | reviewer, target SHA, result |
 | Product | .NET 10 Minimal API, direct SQLite, integration tests, workflow, and public docs exist. | changed paths |
 | Product proof | Locked restore, zero-warning Release build, 28 tests, and vulnerability scan pass. | command outputs, durations |

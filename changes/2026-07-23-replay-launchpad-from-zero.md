@@ -124,6 +124,10 @@ This records an attestation of the command; it does not authenticate identity.
 | `NFR-DOCS-01` | pass | Fresh correction evidence: the documentation gate passes all 57 tracked Markdown files after removing the Roadmap-exhaustion contradiction and recording the blocker verbatim. |
 | `TEC-STK-01` | pass | Fresh non-regression evidence: locked restore and zero-warning/error Release build pass after the docs-only correction. |
 | `FUN-APR-01` | pass | Fresh non-regression evidence: all 28 unchanged integration cases pass with zero failed or skipped after the docs-only correction. |
+| `FUN-ROADMAP-01` | fail | Completed fresh replay against public source `a29b507bd435f3128ad637c312aaf23ce947ca8d` reached failed local replay SHA `7bf0a532...` after 85.53 minutes. Checking the sole Phase 1 item exhausted the tutorial's one-phase Roadmap, so final readiness/current/change gates could not all pass. |
+| `FUN-APR-01` | fail | The same replay found the tutorial's generic instruction to use exact JSON insufficient to reconstruct the nested request/audit DTOs and per-decision timestamps without ambiguity. |
+| `FUN-ROADMAP-01` | pass | Correction attempt: the tutorial and checklist now require both confirmed phases at inception, preserve the Phase 1 record's historical anchor, advance to current unchecked Phase 2 after truthful Phase 1 closeout, and explicitly require no second local Change Record. |
+| `FUN-APR-01` | pass | Correction attempt: the design and implementation checklists now route field-by-field reconstruction to the exact nested request and audit examples in `docs/api.md`, explicitly naming approval/rejection `recordedAtUtc` and audit-event `occurredAtUtc` without copying product source. |
 
 ## Corrections
 
@@ -134,6 +138,14 @@ This records an attestation of the command; it does not authenticate identity.
   Phase 1; truthful Phase 1 closeout advances readiness/current selection to planned, unchecked Phase
   2; no second local replay Change Record or Phase 2 implementation/closeout is required. Prior
   Roadmap-instruction evidence is stale and superseded only by the append-only evidence below.
+- **Completed replay evidence (2026-07-23):** public source
+  `a29b507bd435f3128ad637c312aaf23ce947ca8d` produced final failed replay SHA `7bf0a532...`
+  after 85.53 minutes. It falsified the one-phase Roadmap instructions above and also found that
+  "exact JSON" did not clearly require the nested request/audit objects or their per-decision
+  timestamps. The docs now make `docs/api.md` sections `Create a request` and `Audit` the explicit
+  field-by-field authority, including approval/rejection `recordedAtUtc` and event `occurredAtUtc`,
+  without copying or changing product source. Phase 2 remains current and unchecked; this record
+  remains `confirmed` with final review pending.
 
 ## Closeout
 

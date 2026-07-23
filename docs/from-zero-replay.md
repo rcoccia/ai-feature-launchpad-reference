@@ -192,6 +192,15 @@ The design must resolve:
 - direct `Microsoft.Data.Sqlite` access to one file-backed database;
 - fixed Product and AI-Risk approval slots;
 - exact trusted-header, route, JSON, problem, and warning contracts;
+- the exact nested request resource from [API contract: Create a request](api.md#create-a-request):
+  preserve the `approvals.product` and `approvals.aiRisk` objects, nullable decision objects, each
+  approval's `actorId` and `recordedAtUtc`, the rejection's `actorId`, `actorRole`, and
+  `recordedAtUtc`, plus request-level `createdAtUtc` and `updatedAtUtc`; do not flatten or omit these
+  per-decision timestamps;
+- the exact audit envelope and event fields from [API contract: Audit](api.md#audit): preserve
+  top-level `requestId`, `featureName`, and ordered `events`, with every event's `sequence`,
+  `occurredAtUtc`, `action`, nullable `actorId`, nullable `actorRole`, `outcome`, `reasonCode`,
+  `statusAfter`, and `versionAfter`;
 - two `STRICT` SQLite tables, append-only audit triggers, schema versioning, and startup validation;
 - atomic state-and-audit writes with `BEGIN IMMEDIATE`;
 - fixed validation order, audited refusals, terminal behavior, duplicate behavior, and serialized
@@ -200,9 +209,12 @@ The design must resolve:
 - no ORM, repository/provider layer, generic workflow, identity provider, cloud, or production claim.
 
 Use the public design companion, [API contract](api.md), and
-[trusted-header boundary](trust-boundary.md) as the complete semantic reference. Run the architecture
-form gate, commit and push a stable design target if the agent harness requires a remote ref, and
-invoke an independent no-edit architecture reviewer:
+[trusted-header boundary](trust-boundary.md) as the complete semantic reference. Before challenge,
+compare the design field-by-field with the API document's nested resource and audit examples; the
+examples are normative reconstruction input, not optional illustration. Do not inspect or copy
+product source to fill a missing field. Run the architecture form gate, commit and push a stable
+design target if the agent harness requires a remote ref, and invoke an independent no-edit
+architecture reviewer:
 
 ```powershell
 python -B .github\skills\architecture-review\scripts\check_architecture.py `
@@ -254,7 +266,10 @@ The expected product surfaces are:
 
 Reconstruct behavior from the reviewed design and public API/trust documents. Do not read or copy
 the public branch's C# source or test implementation. Preserve the fixed aggregate and exact
-non-production boundary. The integration suite must prove creation, both approval orders, actor
+non-production boundary. Implement the request and audit DTO nesting field-for-field from
+`docs/api.md`, including approval/rejection `recordedAtUtc` values and audit-event `occurredAtUtc`;
+do not substitute flattened actor or timestamp fields. The integration suite must prove creation,
+both approval orders, actor
 separation, both authorized rejection roles, retained pre-rejection approval, successful and refused
 audit events, terminal attempts against Approved and Rejected targets, duplicates, parallel commands,
 durable reload, schema and append-only enforcement, warning behavior, and Production startup refusal.
