@@ -19,9 +19,19 @@ Prepare closeout before final review so the independent judgment covers the comp
 4. A fully delivered approved outcome may be checked with concise evidence. Partial delivery splits
    delivered and remaining wording only when the approved scope is preserved. New capability,
    priority, phase, dependency, or deferral requires human-directed replan.
-5. Commit and push changelog, Roadmap, Change Record, implementation, design, and evidence. Freeze
+5. When this delivers the final eligible phase, do not leave it unchecked or invent a placeholder.
+   The candidate must add top-level `**Lifecycle:** complete`, a newly accepted human-authorized
+   ADR, and this protected Change Record section in the same diff:
+
+   ```markdown
+   ## Roadmap lifecycle authorization
+
+   **ADR:** `constitution/decisions/ADR-YYYYMMDD-NN-lowercase-kebab-name.md`
+   ```
+
+6. Commit and push changelog, Roadmap, Change Record, implementation, design, and evidence. Freeze
    that target, then invoke universal final no-edit review.
-6. After the reviewer returns, the Tower appends the actual result. Only stable `PROMOTE`, complete
+7. After the reviewer returns, the Tower appends the actual result. Only stable `PROMOTE`, complete
    residual dispositions, `status: "reviewed"`, merge-ready success, and human authorization permit
    merge.
 
@@ -34,6 +44,7 @@ Prepare closeout before final review so the independent judgment covers the comp
 - **No separate delta/review file:** the Change Record is the durable audit chain.
 - **No baseline retirement unless triggered:** the reserved deletion-only transition is a separate
   governed Change Record.
+- **Complete is reopenable:** it means no currently approved work, not archival or permanent closure.
 
 ## References
 

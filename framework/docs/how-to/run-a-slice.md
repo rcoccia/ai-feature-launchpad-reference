@@ -12,8 +12,10 @@ Read:
 - `constitution/roadmap.md`
 - `constitution/gap-register.md`, when present
 
-Select one incomplete Roadmap phase. If no phase is available, run `replan-and-correct`; do not
-create an unanchored record.
+Use the canonical selector through `plan-slice`; do not select by inspection. Accidental exhaustion
+routes to Roadmap re-cadence. A valid complete Roadmap reports no currently approved work and blocks
+planning until a human-authorized atomic reopen through `replan-and-correct`. Never create an
+unanchored record.
 
 ## 2. Create and confirm one Change Record
 

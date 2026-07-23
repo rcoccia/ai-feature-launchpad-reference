@@ -70,6 +70,14 @@ Mission or Constraints changes always stop for the human. A changed Authority bi
 applicability result always uses this wider radius; it cannot authorize a compliance claim or
 invent replacement semantics.
 
+### Reopen a complete Roadmap
+
+When a new approved requirement arrives after `**Lifecycle:** complete`, use one
+human-authorized governed change. Confirm a Change Record anchored to the newly added phase, add a
+new accepted ADR and its `## Roadmap lifecycle authorization` reference, remove the marker, and add
+at least one new non-deferred phase with an unchecked item in the same diff. Removing only the
+marker or retaining it beside the new phase blocks. Do not auto-reopen or invent a placeholder.
+
 ## The shape to remember
 
 ```text

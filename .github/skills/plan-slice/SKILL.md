@@ -10,7 +10,8 @@ Create one confirmed, governed Change Record before implementation.
 ## Workflow
 
 1. Run `python -B .github/skills/bootstrap-tower/scripts/scaffold_constitution.py
-   --current-phase constitution`. A nonzero result blocks; never implement another selector.
+   --current-phase constitution`. A nonzero result blocks; never implement another selector. For a
+   valid complete Roadmap, relay the actionable human-reopen diagnostic and create no Change Record.
 2. Read Mission, the exact current Roadmap section, Constraints, and the critique/gap register when
    present. Retrieve only materially related decisions, Change Records, reviews, and evidence.
 3. State the observable outcome, governed facts, Tower judgment, and any real consequential concern.
@@ -42,6 +43,8 @@ Create one confirmed, governed Change Record before implementation.
   review or human merge authorization.
 - **No legacy adapter:** new work never recreates the retired `specs/` namespace; historical
   retrieval starts at `changes/0000-control-tower-baseline.md`.
+- **Complete is non-plannable:** readiness may be green while `--current-phase` blocks because no
+  work is currently approved. Route reopening through `replan-and-correct`; never auto-reopen.
 
 ## References
 

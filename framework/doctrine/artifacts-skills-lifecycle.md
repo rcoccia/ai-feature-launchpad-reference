@@ -56,7 +56,7 @@ La tower governa una **base di conoscenza versionata** che e' il suo "context st
 |---|---|---|---|---|
 | **Mission** (`mission.md`) | Direzione durevole: cosa costruiamo e perche', confini | raramente (cambi di direzione) | si' | — |
 | **Constraints** (`constraints.md`, NUOVO) | Vincoli **tecnici / funzionali / non-funzionali** che condizionano ogni slice | quando emergono/mutano vincoli | **no** | **da creare** |
-| **Roadmap** (`roadmap.md`) | Sequenza canonica di capability: delivered/current/planned/deferred, con exhaustion fail-closed | ad ogni closeout che muove la roadmap o re-cadence | si' | ok |
+| **Roadmap** (`roadmap.md`) | Sequenza canonica di capability: delivered/current/planned/deferred, con exhaustion fail-closed e complete esplicito riapribile | ad ogni closeout che muove la roadmap, complete o re-cadence | si' | ok |
 | **Change Record** (`changes/YYYY-MM-DD-name.md`) | Memoria canonica: outcome, obblighi/ragioni, piano breve, evidenza, correzioni, closeout e verdetti effettivi | per ogni nuovo cambiamento governato | **template pronto** | ok (skill `plan-slice`) |
 | **Gap Register** (`references/*-gap-*.md`) | Disallineamenti spec<->agente<->runtime<->test, aperti/chiusi | ad ogni slice che apre/chiude gap | si' | ok |
 | **Baseline/State** (`roadmap.md`) | Cosa e' validato ora, con quale evidenza (test/eval) | ad ogni promote | si' | manca eval quantitativo |
@@ -273,7 +273,11 @@ Lo stato item-derived e' invece deterministico: tutti `[x]` = delivered; la prim
 deferred con almeno un `[ ]` = current, incluse le fasi parziali; le successive eleggibili = planned.
 `**Status:** deferred` rende una fase non eleggibile ma ancora valida/ispezionabile. Aggiungerlo,
 mantenerlo o rimuoverlo e' giudizio strategico umano. Se non resta una fase eleggibile, il selector
-blocca come exhausted e instrada a re-cadence.
+blocca come exhausted e instrada a re-cadence, salvo l'esatto top-level
+`**Lifecycle:** complete`: valido solo con tutte le fasi non deferred delivered, rende readiness
+valida ma planning non selezionabile. La riapertura umana rimuove il marker e aggiunge atomicamente
+almeno una nuova fase non deferred con un item `[ ]`, con Change Record confermato e nuovo ADR
+accepted nello stesso diff. Complete non significa archivio o chiusura permanente.
 
 ### 5.3 Correction Radius durante coding
 

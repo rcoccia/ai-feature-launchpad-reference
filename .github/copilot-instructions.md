@@ -18,8 +18,9 @@ Look for the constitution — `constitution/mission.md`, `constitution/constrain
   passes the readiness gate.
 - **Present.** You are *in* the loop. Read `framework/doctrine/operating-model.md` (the loop),
   `constitution/constraints.md` (the rules), `constitution/roadmap.md` (the next change), and the
-  instance gap register when present. Pick the next incomplete roadmap phase and run `plan-slice`
-  (it creates exactly one dated Change Record under `changes/` and stops for human confirmation).
+  instance gap register when present. Run the canonical current-phase selector through `plan-slice`.
+  A valid complete Roadmap has no current work: do not create a slice; wait for a human-authorized
+  atomic reopen through `replan-and-correct`.
 
 Background: `README.md`, `framework/doctrine/MANIFESTO.md`. Human-facing reading layer:
 `framework/docs/` (start at `framework/docs/README.md`).
@@ -43,7 +44,8 @@ Background: `README.md`, `framework/doctrine/MANIFESTO.md`. Human-facing reading
 - **Work in bounded changes**, one roadmap phase at a time:
   `Sense -> Choose -> Plan (before code) -> Design -> Architecture-review (if load-bearing) ->
   Code -> Closeout -> Review -> Record`. A change with **no roadmap phase is a replanning trigger**, not a
-  valid state (run `replan-and-correct`; see the Roadmap Re-cadence Rule in the operating model).
+  valid state. Accidental exhaustion requires re-cadence; explicit complete state blocks planning
+  until human-authorized reopen (run `replan-and-correct`; see the Roadmap Re-cadence Rule).
 - **Skills drive each step** (`.github/skills/`, loaded on demand by description): the LIGHT core is
   `bootstrap-tower`, `inception-readiness`, `plan-slice`, `architecture-review`, `review-slice`,
   `record-closeout`, and `replan-and-correct`. Full additionally provides `run-slice-evals` and

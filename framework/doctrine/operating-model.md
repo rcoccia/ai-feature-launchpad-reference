@@ -82,6 +82,11 @@ phases are **planned**. Optional `**Status:** deferred` keeps history inspectabl
 from selection. Historical entries are evidence, not a reason to retroactively rewrite them, and
 deferral is always a human strategy decision rather than an inferred state.
 
+An optional, exact top-level `**Lifecycle:** complete` declares that every non-deferred phase is
+delivered and no work is currently approved. It is readiness-valid but not selectable. Without the
+marker, the same all-delivered shape is accidental exhaustion and blocks for human re-cadence. A
+marker beside any eligible unchecked phase is contradictory and blocks.
+
 All active constraints remain binding. Every Change Record starts with the universal baseline and
 adds obligations only through explicit risk/impact triggers. The Tower proposes applicability and
 reasons; deterministic gates may add obligations only when certainty is mechanical; the human
@@ -269,11 +274,11 @@ Replace the contract name with the level-specific contract for your domain. The 
 
 ## Roadmap Re-cadence Rule
 
-**The roadmap is cyclical, not terminal.** It is one *wave*'s committed slice of the gap
-register — the sequenced, bounded plan for the current cycle — **re-derived from the register
-at each cycle boundary**. "All phases complete" does not mean "the method is finished"; it means
-**replan the next wave**. A roadmap left at "done" while work continues is a stale steering
-wheel: the loop keeps turning, but the artifact no longer guides it.
+**The Roadmap is reopenable, not permanently terminal.** It is the sequenced, bounded set of
+currently approved capability. All phases delivered without an explicit lifecycle marker is
+accidental exhaustion and means **replan the next wave**. All phases delivered with
+`**Lifecycle:** complete` means no work is currently approved, not deletion or archival. If a new
+requirement arrives months later, the human may reopen it through a governed transition.
 
 The load-bearing signal: **a slice with no roadmap phase is a replanning trigger, not a valid
 state.** A dated slice that declares "no phase" is either drift or the sign that the roadmap is
@@ -283,13 +288,15 @@ exhausted and must be re-derived (trigger *roadmap-exhausted / cycle-boundary* i
 observed, and corrected, in this method's own history (critique **C17**, ADR-11).
 
 The canonical Roadmap analyzer in
-`.github/skills/bootstrap-tower/scripts/scaffold_constitution.py` makes exhaustion fail closed for
-`--check`, `--readiness`, and `--current-phase`; `plan-slice` consumes that selector without a
-fallback algorithm. Re-deriving is a **governed course-correction**: run `replan-and-correct`, mark
-the prior wave complete, and add the new wave's phases — honestly, `[x]` for what is already done
-and `[ ]` for what is open. Correct the artifact upstream; do not keep justifying slices ad-hoc
-against the register. The analyzer proves explicit syntax and item-derived state, not that a human
-deferral or re-cadence choice is strategically sound.
+`.github/skills/bootstrap-tower/scripts/scaffold_constitution.py` makes accidental exhaustion fail
+closed for `--check`, `--readiness`, and `--current-phase`. Valid complete state passes `--check`
+and `--readiness` with no current work, while `--current-phase` and `plan-slice` remain blocking.
+Re-cadencing active exhaustion is a governed course-correction. Reopening complete state is one
+human-authorized change that removes the marker and adds at least one newly approved, non-deferred
+phase with an unchecked item; its confirmed Change Record and newly accepted ADR attest the
+decision in the same diff. Either half-transition blocks. Correct upstream; never justify
+unanchored slices or add speculative backlog. The analyzer proves explicit syntax and item-derived
+state, not identity or strategic wisdom.
 
 ## Change Closeout Rule
 
@@ -338,6 +345,9 @@ remaining outcomes are unchecked; do not tick a broad parent outcome for partial
 The canonical selector therefore keeps a partial phase current, advances past a fully checked
 delivered phase, skips only explicitly deferred phases, and blocks on exhaustion. Adding, retaining,
 or removing `**Status:** deferred` is human Roadmap/replan judgment, never a closeout heuristic.
+When closeout delivers the final eligible phase, it may add `**Lifecycle:** complete` only with the
+confirmed human authorization and accepted ADR in the same candidate. Leaving the final outcome
+unchecked or adding a speculative placeholder is not valid closeout.
 
 This autonomy does not authorize strategy. A new capability, priority or order change, new phase,
 or strategic dependency stops for human-directed `replan-and-correct` and an ADR when severity

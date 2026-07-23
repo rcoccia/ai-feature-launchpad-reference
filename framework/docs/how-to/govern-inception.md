@@ -25,8 +25,13 @@ into three areas, and waits for your answers *before* the **main Tower** writes 
 
 The output is **THIN strategy**, not a disguised delivery slice:
 
+- **Inherited method constraints** are the six exact portable kernel laws already supplied by the
+  Constraints asset: Change Record, Roadmap, docs, merge, conditional architecture review, and
+  strategy autonomy. Keep their IDs and locally pinned references; do not replace them with an
+  aggregate governance alias.
 - **Constraints** are cross-slice laws, boundaries, and invariants. They are not a catalogue of
-  endpoints, status codes, feature flows, or test cases.
+  endpoints, status codes, feature flows, or test cases. Roughly 3-6 elicited product constraints
+  are usually enough to start; the inherited baseline is separate from that guidance.
 - **Roadmap phases** are capabilities. Their detailed confirmed behavior becomes EARS only after
   readiness, in the selected slice.
 - A missing technical design stays an open question or roadmap capability. The bootstrap does not
@@ -51,17 +56,20 @@ The skill scaffolds the three files from its own `assets/` (`.github/skills/boot
 python .github/skills/bootstrap-tower/scripts/scaffold_constitution.py --check constitution
 ```
 
-Fix until it exits 0. This proves *form* (all sections present, constraints well-formed, every
-canonical phase has a Goal and top-level item, and a current phase exists) — not yet *coherence*.
+Fix until it exits 0. This proves *form* (all sections present, constraints well-formed, and every
+canonical phase has a Goal and top-level item) — not yet *coherence*.
 All checked phases are delivered; a partial first eligible phase is current; explicit
 `**Status:** deferred` is skipped but still validated. If no non-deferred unchecked phase remains,
-the Roadmap is exhausted and the check blocks for re-cadence.
+the Roadmap blocks as accidental exhaustion unless exact top-level `**Lifecycle:** complete`
+declares no currently approved work. Valid complete state passes readiness but remains
+non-plannable until a human-authorized reopen.
 
 ### 4. Gate for coherence — `inception-readiness`
 
 Shape is necessary, not sufficient: a well-formed constitution can still be incoherent. Hand it
 to [`inception-readiness`](../reference/skills.md), run **independently** by the `reviewer-agent`
-(producer != judge). It runs the deterministic readiness check plus a semantic checklist:
+(producer != judge). It first blocks if any of the six exact portable baseline IDs is absent, then
+runs the remaining deterministic checks plus a semantic checklist:
 
 - does each mission **Success** criterion map to a roadmap phase?
 - is **Phase 1** one bounded, self-contained session?

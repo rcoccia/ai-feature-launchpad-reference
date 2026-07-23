@@ -6,7 +6,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import date
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from constraint_model import ConstraintModelError, json_array, parse_constraints, scalar
 
@@ -52,6 +52,9 @@ FINAL_ATTEMPT_LABELS = (
     "Summary",
 )
 FULL_SHA_RE = re.compile(r"^[0-9a-f]{40}(?:[0-9a-f]{24})?$")
+ROADMAP_LIFECYCLE_ADR_RE = re.compile(
+    r"^constitution/decisions/ADR-\d{8}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$"
+)
 
 
 class ChangeRecordError(ValueError):
@@ -92,6 +95,7 @@ class ChangeRecord:
     roadmap: str
     outcome: str
     initial_confirmation: str
+    roadmap_lifecycle_adr: str
     obligations: tuple[Obligation, ...]
     plan_steps: tuple[str, ...]
     evidence: tuple[EvidenceEntry, ...]
@@ -304,6 +308,40 @@ def _labels(section: str, name: str) -> list[str]:
         if match and match.group(1).strip().lower() == name.lower():
             values.append(match.group(2).strip().strip("`"))
     return values
+
+
+def _roadmap_lifecycle_authorization(
+    path: Path, section: str
+) -> tuple[str, list[str]]:
+    """Normalize the optional exact lifecycle ADR section."""
+    if not section:
+        return "", []
+    problems: list[str] = []
+    lines = [line.strip() for line in section.splitlines() if line.strip()]
+    values = _labels(section, "ADR")
+    if len(lines) != 1 or len(values) != 1:
+        return "", [
+            f"{path}: Roadmap lifecycle authorization must contain exactly one "
+            "'**ADR:** `constitution/decisions/ADR-YYYYMMDD-NN-lowercase-kebab-name.md`' line"
+        ]
+    value = values[0].strip()
+    if _placeholder(value) or "\\" in value:
+        problems.append(f"{path}: Roadmap lifecycle ADR path is empty, placeholder, or malformed")
+        return "", problems
+    posix = PurePosixPath(value)
+    normalized = posix.as_posix()
+    if (
+        posix.is_absolute()
+        or ".." in posix.parts
+        or normalized != value
+        or ROADMAP_LIFECYCLE_ADR_RE.fullmatch(normalized) is None
+    ):
+        problems.append(
+            f"{path}: Roadmap lifecycle ADR must be a repository-relative "
+            "constitution/decisions/ADR-YYYYMMDD-NN-lowercase-kebab-name.md path"
+        )
+        return "", problems
+    return normalized, problems
 
 
 def _obligations(path: Path, section: str) -> tuple[tuple[Obligation, ...], list[str]]:
@@ -537,6 +575,12 @@ def load_change_record(
         problems.append(f"{path}: observable outcome is empty or placeholder")
     if status in {"confirmed", "reviewed"} and _placeholder(confirmation):
         problems.append(f"{path}: confirmed state needs a non-placeholder human attestation")
+    roadmap_lifecycle_adr, lifecycle_authorization_problems = (
+        _roadmap_lifecycle_authorization(
+            path, sections.get("roadmap lifecycle authorization", "")
+        )
+    )
+    problems.extend(lifecycle_authorization_problems)
 
     obligations, obligation_problems = _obligations(
         path, sections.get("activated proof obligations", "")
@@ -639,6 +683,7 @@ def load_change_record(
         roadmap=roadmap,
         outcome=outcome,
         initial_confirmation=confirmation,
+        roadmap_lifecycle_adr=roadmap_lifecycle_adr,
         obligations=obligations,
         plan_steps=plan_steps,
         evidence=evidence,
@@ -794,6 +839,7 @@ def monotonic_problems(old: ChangeRecord, new: ChangeRecord) -> list[str]:
         ("roadmap", old.roadmap, new.roadmap),
         ("observable outcome", old.outcome, new.outcome),
         ("initial confirmation", old.initial_confirmation, new.initial_confirmation),
+        ("Roadmap lifecycle ADR", old.roadmap_lifecycle_adr, new.roadmap_lifecycle_adr),
         ("short implementation plan", old.plan_steps, new.plan_steps),
     ):
         if before != after:
