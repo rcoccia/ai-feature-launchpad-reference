@@ -119,14 +119,270 @@ This records an attestation of the command; it does not authenticate identity.
 
 **Named trigger:** `launchpad-consistency-and-trust-boundary`
 
-The trigger requires the Architect to add the minimal load-bearing decision to this section and
-create only the sibling
-`changes/2026-07-23-govern-ai-feature-launch/design-under-test.md`. The design must resolve
-transactional request/approval/rejection/audit consistency, refused and duplicate/concurrent attempt
-behavior, durable reload behavior, and the trusted-header boundary against the activated constraints.
-The existing inception authorization is
-`constitution/decisions/ADR-20260723-01-authorize-launchpad-inception.md`. Architecture production and
-independent challenge are pending; no product code may begin before an actual stable `SOUND`.
+**Companion:** `changes/2026-07-23-govern-ai-feature-launch/design-under-test.md`
+
+**Governing ADR supplied to the form pre-check only:**
+`constitution/decisions/ADR-20260723-01-authorize-launchpad-inception.md`
+
+**Affected constraints:** `FUN-CHANGE-01`, `FUN-ROADMAP-01`, `NFR-DOCS-01`, `FUN-MERGE-01`,
+`FUN-ARCHREVIEW-01`, `FUN-AUTONOMY-01`, `TEC-STK-01`, `TEC-IDB-01`, `FUN-APR-01`, and `NFR-CI-01`.
+
+### Decision and component boundary
+
+Build one `net10.0` ASP.NET Core Minimal API service and one integration-test project. Route handlers
+use `Microsoft.Data.Sqlite` directly against one local SQLite file. A small schema initializer and
+focused SQL command functions may organize `Program.cs`, but there is no repository interface,
+unit-of-work layer, provider abstraction, ORM, message bus, background worker, or second service.
+
+The fixed aggregate identifies the governed AI feature with one required `featureName`, has exactly
+two approval slots, Product and AI-Risk, and has one optional rejection. `featureName` is request
+identity, not policy or additional business behavior. The aggregate does not model summaries, model
+or provider metadata, risk scores, comments, rejection reasons, policy rules, user directories, or
+generic workflow stages. The API establishes no confidentiality or read-authorization policy; its
+two GET routes are reference observability surfaces.
+
+The runtime components and flow are:
+
+1. An early middleware adds the non-production warning to every HTTP response.
+2. Minimal API routes validate transport shape and map stable problem responses.
+3. Command routes parse reference headers and execute direct SQL in one transaction.
+4. Read routes materialize the aggregate or its ordered audit events from the same SQLite file.
+5. Startup initializes or validates schema version 1 before the listener becomes ready.
+
+### Minimal HTTP, JSON, and identity contract
+
+Request creation accepts a JSON object with exactly one required `featureName` field. The value is
+trimmed and must contain 1-120 characters after trimming; missing, non-string, empty, overlong,
+malformed, or unknown-field shapes return `400 invalid_request_body`. All decision command routes
+remain bodyless, and any body octet on them returns `400 body_not_allowed`. The server creates a
+lowercase canonical GUID and UTC timestamps.
+
+```json
+{ "featureName": "Customer support answer assistant" }
+```
+
+| Method and path | Required reference role | Success |
+|---|---|---|
+| `POST /api/launch-requests` | `Requester` | `201 Created`, `Location`, and the resource |
+| `POST /api/launch-requests/{id}/approvals/product` | `Product` | `200 OK` and the resource |
+| `POST /api/launch-requests/{id}/approvals/ai-risk` | `AI-Risk` | `200 OK` and the resource |
+| `POST /api/launch-requests/{id}/rejection` | `Product` or `AI-Risk` | `200 OK` and the resource |
+| `GET /api/launch-requests/{id}` | none; no identity is consumed | `200 OK` and the resource |
+| `GET /api/launch-requests/{id}/audit` | none; no identity is consumed | `200 OK` and ordered events |
+
+Every command requires exactly one `X-Reference-Actor-Id` and one
+`X-Reference-Actor-Role` header. Actor IDs are 1-128 characters, have no leading or trailing
+whitespace, comma, or control character, and compare as case-sensitive ordinal strings. Roles compare
+case-sensitively and the only accepted values are `Requester`, `Product`, and `AI-Risk`. A command
+with a missing, repeated, or invalid actor fails `401`; a missing, repeated, unknown, or
+endpoint-mismatched role fails `403`. The role header is only a trusted-upstream assertion: the
+service neither authenticates it nor looks up an actor.
+
+There is no local actor allow-list, so the service cannot classify a syntactically valid upstream
+actor assertion as unknown without inventing an identity directory. Any value outside the closed role
+set, or any malformed identity-header shape, is the local unknown-identity case and fails closed; a
+well-formed actor ID is trusted only within the warned reference boundary.
+
+The complete resource JSON has these keys; nullable decision objects remain present as `null`:
+
+```json
+{
+  "id": "lowercase-guid",
+  "featureName": "Customer support answer assistant",
+  "status": "Pending|Approved|Rejected",
+  "requesterActorId": "actor",
+  "approvals": {
+    "product": { "actorId": "actor", "recordedAtUtc": "RFC3339-UTC" },
+    "aiRisk": null
+  },
+  "rejection": null,
+  "version": 1,
+  "createdAtUtc": "RFC3339-UTC",
+  "updatedAtUtc": "RFC3339-UTC"
+}
+```
+
+When present, `rejection` has exactly `actorId`, `actorRole`, and `recordedAtUtc`. Audit retrieval
+returns `requestId`, `featureName`, and an `events` array ordered by `sequence`; every event has
+`sequence`, `occurredAtUtc`, `action`, nullable `actorId`, nullable `actorRole`, `outcome`,
+`reasonCode`, `statusAfter`, and `versionAfter`. The fixed action values are `Submit`,
+`ProductApproval`, `AiRiskApproval`, and `Rejection`; outcomes are `Succeeded` and `Refused`.
+
+Errors use `application/problem+json` with stable `title`, numeric `status`, and `code`, plus
+`requestId` only after an existing request has been resolved. Invalid creation JSON or `featureName`
+is `400 invalid_request_body`; malformed IDs are `400`; absent IDs are `404`. Missing/invalid actors
+are `401`, role failures are `403`, and terminal, duplicate, or separation-of-duties refusals are
+`409`.
+
+This is an intentionally spoofable reference boundary. The host refuses to start unless the ASP.NET
+Core environment is exactly `Development` or `Testing`. At startup it logs an uppercase
+`NON-PRODUCTION TRUSTED-HEADER REFERENCE` warning, and every response, including errors, carries:
+
+`X-Reference-Authentication-Warning: NON-PRODUCTION; caller-supplied headers are not authentication`
+
+The README, API document, and trust-boundary document repeat that warning before examples. The README
+and API document show the sole required `featureName` creation field and returned request identity;
+they add no list, search, filter, policy, or metadata surface. No forwarded-header trust inference,
+OAuth, JWT, cookie, API-key, identity-provider, or production authentication surface is present.
+
+### State, terminal, duplicate, and concurrent behavior
+
+- Creation records the normalized `featureName`, `Pending`, version `0`, and audit sequence `1`.
+- A first valid approval fills its role slot, increments the version once, and remains `Pending`.
+  The second valid approval must have a different actor and atomically changes the request to
+  `Approved`.
+- Product and AI-Risk approvers are each distinct from the requester and from each other. These
+  checks apply only to approvals; no additional rejector-separation policy is inferred.
+- A valid `Product` or `AI-Risk` actor may reject only a `Pending` request. Existing approval evidence
+  is retained and the same transaction changes the request to `Rejected`.
+- `Approved` and `Rejected` are terminal. Every later decision command is refused and audited without
+  changing aggregate version or timestamps.
+- Decision POSTs are deliberately not idempotent. While the request remains Pending, repeating a
+  filled approval slot, including with the same actor, returns audited
+  `409 approval_already_recorded`; after either terminal outcome, the earlier terminal check returns
+  `409 request_terminal`. Repeating a rejection therefore encounters the terminal rule. Submission
+  retries create separate requests; there is no idempotency key.
+
+Every write transaction begins with `BEGIN IMMEDIATE`, so SQLite chooses one serial order. Concurrent
+distinct Product and AI-Risk approvals both succeed in that order and end Approved. For a duplicate
+slot, exactly the first succeeds and the later attempt is an audited conflict. If one actor races for
+both approval roles, the first role may succeed and the later role is an audited separation conflict.
+A rejection race is evaluated against the state left by the preceding transaction: it succeeds if
+that state is still Pending and is refused if it is terminal. No scheduling winner is promised, but
+each response and the final state are deterministic for the committed order. There is no distributed
+lock, retry coordinator, ETag, or deduplication store.
+
+### Direct SQLite schema and initialization
+
+The selected package is direct `Microsoft.Data.Sqlite`, not EF Core. The database path is the
+`Launchpad:DatabasePath` setting, defaulting to the untracked local file
+`./data/launchpad.db`; integration tests always supply a unique temporary file.
+
+Schema version 1 contains two `STRICT` tables:
+
+| Table | Columns |
+|---|---|
+| `launch_requests` | `id TEXT PRIMARY KEY`, `feature_name TEXT NOT NULL`, `status TEXT`, `requester_actor_id TEXT`, nullable Product actor/time, nullable AI-Risk actor/time, nullable rejector actor/role/time, `version INTEGER`, `created_at_utc TEXT`, `updated_at_utc TEXT` |
+| `audit_events` | `request_id TEXT`, `sequence INTEGER`, `occurred_at_utc TEXT`, `action TEXT`, nullable `actor_id TEXT`, nullable `actor_role TEXT`, `outcome TEXT`, `reason_code TEXT`, `status_after TEXT`, `version_after INTEGER`, composite primary key `(request_id, sequence)`, and a restricting foreign key to `launch_requests` |
+
+`launch_requests` checks that `feature_name` is already trimmed and 1-120 characters, checks exact
+status and role enums, paired actor/time nullability, approval-actor separation, and these complete
+row shapes: Pending has no rejection and fewer than two approvals; Approved has both approvals and no
+rejection; Rejected has a rejection and no completed pair of approvals. Its version equals the count
+of successful approval/rejection decisions retained in the row. A trigger blocks deletion, and
+another blocks any update to a terminal row.
+
+`audit_events` checks action, role, outcome, status, and the fixed reason-code sets. Success reasons
+are `request_created`, `approval_recorded`, and `request_rejected`. Refusal reasons are
+`identity_missing`, `identity_invalid`, `role_missing`, `role_unknown`, `role_mismatch`,
+`request_terminal`, `approval_already_recorded`, `requester_cannot_approve`, and
+`approvers_not_distinct`. Insert triggers require the next contiguous per-request sequence and require
+`status_after` and `version_after` to equal the referenced aggregate at insertion. Update and delete
+triggers make audit rows append-only.
+
+The request primary key and audit composite primary key are the only indexes. Every supported query
+is an ID lookup or an audit range ordered by that composite key; there is no list/status query to
+justify another index.
+
+On each connection the service enables `foreign_keys=ON`, `busy_timeout=5000`, and
+`synchronous=FULL`; initialization fixes the local journal mode to `DELETE`. Startup obtains an
+immediate transaction and reads `PRAGMA user_version`. Version `0` is accepted only when no
+Launchpad tables exist, creates all version-1 tables/triggers, and sets `user_version=1` atomically.
+Version `1` must contain every expected object. Any partial, newer, or unknown schema fails startup.
+There is no migration framework or automatic downgrade.
+
+### One command transaction and audit boundary
+
+For creation, the exact JSON shape, normalized `featureName`, and headers are validated before an ID
+exists. One immediate transaction inserts the named request and its sequence-1 success event, then
+commits before returning `201`.
+
+For a targeted command, the fixed evaluation order is: transport and canonical GUID; begin immediate
+transaction and load target; actor header; role header and endpoint authorization; terminal state;
+filled slot; requester separation; other-approver separation; mutation. Once an existing target is
+loaded, every identity, authorization, terminal, duplicate, or separation refusal appends one event
+with the unchanged state snapshot and commits before its error response is sent. A success updates
+the aggregate and version, appends one event with the resulting snapshot, and commits before its
+success response. A constraint, audit insert, or commit failure rolls back all writes and never
+returns a governed success or refusal.
+
+A governed attempt is therefore a valid creation command attached to its newly created named request,
+or a bodyless decision command attached to an existing request row. Routing/method failures, malformed
+creation JSON or `featureName`, a non-empty decision body, malformed GUID, nonexistent target, and GET
+requests are outside that auditable aggregate boundary. In particular, an invalid creation body has
+no request-attached audit because no request exists. A database-open, lock-timeout, or commit failure
+is an infrastructure failure (`503` where safely classifiable), not a falsely reported `Refused`
+outcome, because no durable audit can be guaranteed while the store is unavailable. This boundary is
+explicit in API documentation and tests.
+
+Reads use a read transaction so a resource snapshot cannot mix aggregate versions. The SQLite file
+is reopened on every host lifetime; no process memory is authoritative. Audit `sequence`, rather
+than timestamp precision, establishes durable order. Timestamps use a canonical seven-fraction-digit
+UTC `Z` representation.
+
+### Test and product-CI evidence
+
+Integration tests run the actual Minimal API through `WebApplicationFactory` against a temporary
+file-backed SQLite database. They cover exact creation shape and `featureName` normalization,
+validation, persistence, resource, and audit projection; exact contract/error/warning shapes; Pending
+creation; both approval orders; requester and cross-approver separation; either authorized rejection
+role; retained pre-rejection approval; terminal refusals; missing/invalid/unknown/mismatched headers;
+duplicate commands; malformed creation and targeted-command/nonexistent exclusions; direct rejection
+of audit update/delete; and schema version refusal.
+
+Concurrency tests issue real parallel HTTP commands and assert the allowed serial winner, every
+response, final aggregate, contiguous audit order, and snapshot/version consistency. Reload tests
+dispose the first host, start a new host against the same file, and compare resource and audit state.
+A production-environment test asserts startup refusal; every HTTP test asserts the warning header.
+
+The product-owned `.github/workflows/product-ci.yml` has read-only contents permission, installs
+.NET `10.0.x`, and runs restore, build, and integration tests on pull requests and main-branch pushes.
+It has no deployment, release, cloud, or Control Tower gate implementation.
+
+### Alternatives and trade-offs
+
+1. **EF Core with its SQLite provider and migrations.** It would reduce handwritten materialization
+   and provide a migration mechanism, but adds change tracking, model conventions, and an abstraction
+   whose transaction ordering and database checks still require explicit SQL. For one fixed aggregate
+   and two tables, direct `Microsoft.Data.Sqlite` is smaller and makes the exact state/audit commit
+   boundary inspectable.
+2. **Separate approval/rejection tables or a generic event-sourced workflow.** Normalized decision
+   rows would make a future variable role set easier, but this phase has exactly two fixed roles.
+   Additional joins, cross-table triggers, projection logic, or a workflow engine enlarge the
+   consistency surface without delivering the bounded outcome.
+3. **In-memory state, a separate audit file, or an audit transaction after state commit.** These
+   shapes are mechanically simpler in parts but cannot provide durable reload and atomic
+   state/audit evidence, so they do not satisfy the confirmed invariant.
+4. **Idempotency keys or optimistic HTTP preconditions.** They can support distributed retry
+   protocols, but no such protocol is confirmed. Explicit audited duplicate conflicts and SQLite
+   serialization keep this single-process reference testable without inventing one.
+
+The negative consequences are deliberate: direct SQL and schema triggers require manual mapping and
+manual future migrations; SQLite serializes writers and a five-second lock timeout can surface an
+unaudited infrastructure error; duplicate submission after a lost response can create another
+request; append-only audit grows without retention; fixed approval columns make adding roles a schema
+change; and trusted headers remain trivially spoofable. The startup guard and warnings make the last
+cost visible rather than solving production identity.
+
+### Reversibility, migration, and file impact
+
+Before code, this design is reversible by changing this confirmed record and re-running the
+independent challenge. After implementation, a future schema change must be a governed,
+`user_version`-incrementing explicit migration; unknown versions continue to fail closed. For this
+non-production reference, an incompatible reversal may archive the SQLite file and initialize a new
+one, but must never rewrite an existing audit history in place. Replacing SQLite or the identity
+boundary later touches the one API project and its integration tests; there is no compatibility
+facade to preserve.
+
+The expected implementation blast radius is limited to `AI.FeatureLaunchpad.sln`,
+`src/Launchpad.Api/` (project, host/contracts, and direct schema/SQL), and
+`tests/Launchpad.Api.IntegrationTests/`; `.github/workflows/product-ci.yml`; `.gitignore` for local
+database files; and the existing `README.md` plus `docs/api.md` and `docs/trust-boundary.md`. No
+Mission, Constraints, Roadmap, ADR, framework, deployment, or second-service file is changed.
+
+Architecture production is complete in this record and its sole companion. Independent challenge is
+still pending; no product code may begin before an actual stable `SOUND` is returned and recorded by
+the Tower.
 
 ## Architecture review
 
