@@ -113,14 +113,20 @@ This records an attestation of the command; it does not authenticate identity.
 |---|---|---|
 | `FUN-CHANGE-01` | pass | `python -B framework/scripts/check_change_record.py --base origin/main` passes with this one canonical feature record and its triggered design companion; no `specs/` path exists. |
 | `FUN-ROADMAP-01` | pass | Readiness passed with exact Phase 1 throughout implementation; closeout checks its delivered item and the selector advances to human-authorized `Phase 2: Reproduce inception and feature from a fresh context` without changing either phase's semantics. |
+| `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passes 53 tracked Markdown files; README, API, and trust-boundary docs state the non-production warning and do not perform the Phase 2 replay. |
 | `NFR-DOCS-01` | pass | `python -B framework/scripts/check_docs.py` passes 53 tracked Markdown files; README, API, trust-boundary docs, and this record use the exact canonical Phase 2 replay name and do not perform that replay. |
 | `FUN-MERGE-01` | pass | The completed confirmed record passes the review pre-check on the frozen pushed target; GitHub checks are green except the expected governed-merge block on `confirmed` status and final verdict `PENDING`. |
 | `FUN-ARCHREVIEW-01` | pass | The explicit architecture pre-check passes and the actual stable `SOUND` for design target `ed91419236a01fafffa21760ed446b024b81f7b7` is recorded above; code began only afterward. |
 | `FUN-AUTONOMY-01` | pass | `python -B framework/scripts/check_autonomy.py --base origin/main` passes; Mission and Constraints are unchanged and implementation remains inside the confirmed strategy. |
 | `TEC-STK-01` | pass | Locked Release restore/build passes for `net10.0`; the API uses direct `Microsoft.Data.Sqlite` 10.0.10 and patched native bundle 2.1.12 against one file-backed SQLite database, with no ORM or provider abstraction. |
 | `TEC-IDB-01` | pass | Integration tests prove exact trusted-header validation, every-response warning, no-identity read routes, and Production startup refusal; README and `docs/trust-boundary.md` conspicuously reject a production-authentication claim. |
+| `FUN-APR-01` | pass | All 28 integration cases pass, covering exact named creation, both approval orders, three-actor separation, authorized terminal rejection, successful and refused audit, duplicate and concurrent serialization, durable reload, schema checks, and append-only trigger enforcement. |
 | `FUN-APR-01` | pass | All 28 integration cases pass, including direct audit retrieval after terminal commands against both Approved and Rejected targets; each proves one appended `Refused` / `request_terminal` event, contiguous sequence, and unchanged durable status/version. |
+| `NFR-CI-01` | pass | Product-owned run `29973241799` completed `build-and-test` successfully in 28 seconds on implementation commit `8d5099acf00ac4d4c61040858698b6aa90b97c2d`, using locked restore, Release build, and integration tests. |
 | `NFR-CI-01` | pass | Product-owned run `29985547135` completed successfully on correction target `94e705f764315998be0b3e237e937597e5dcd1ef`, executing locked restore, Release build, and all 28 integration cases with the new terminal-audit assertions. |
+| `NFR-DOCS-01` | pass | Correction attempt: the exact `Phase 2: Reproduce inception and feature from a fresh context` title is required and present only in the Roadmap and this Change Record. README, `docs/api.md`, and `docs/trust-boundary.md` instead accurately prove the product API and non-production trusted-header boundary and do not need the Roadmap title. |
+| `FUN-APR-01` | pass | Correction attempt: a fresh Release run passes all 28 integration cases against product source and tests byte-identical to reviewed target `06daf05b8af4bcb48d14c19479c090ca9a92e241`, including direct Approved and Rejected terminal-refusal audit assertions. |
+| `NFR-CI-01` | pass | Correction attempt: product source, tests, workflow, and dependencies remain byte-identical to reviewed target `06daf05b8af4bcb48d14c19479c090ca9a92e241`; current product CI run `29985658230` is green, and fresh locked restore, zero-warning/error Release build, 28 tests, and vulnerability scan all pass locally. |
 
 ## Corrections
 
@@ -155,6 +161,14 @@ This records an attestation of the command; it does not authenticate identity.
   `Phase 2: Reproduce inception and feature from a fresh context` name. The focused case and all 28
   integration cases pass without a product-code change; product CI run `29985547135` then passed on
   correction target `94e705f764315998be0b3e237e937597e5dcd1ef`.
+- **Final-review Attempt 2 correction (cycle 5, 2026-07-23):** stable review of target
+  `06daf05b8af4bcb48d14c19479c090ca9a92e241` found two record defects: replacement of prior
+  evidence and metric rows violated append-only history, and the newer documentation evidence
+  overclaimed which files contain the exact Phase 2 title. The rows present at Attempt 1 target
+  `72a181c056dcae103af33ddd7e6119ad5d2a05be` are restored verbatim in their original order; the
+  replacement-era rows and both review attempts remain unchanged; newer accurate evidence and
+  cumulative metrics are appended. Product source, tests, architecture, scope, dependencies,
+  Roadmap, Mission, and Constraints do not change.
 
 ## Architecture
 
@@ -480,8 +494,13 @@ internal contradiction was found.
 | changed artifacts | 25 branch paths: 21 product implementation paths, canonical record, design companion, Roadmap, and changelog |
 | elapsed | approximately 12 minutes from implementation authorization to the first green remote product CI result |
 | executable proof | 28 integration cases; zero failed or skipped on the final local Release run |
+| rework | 3 targeted cycles: dependency advisory correction, compile-time role model correction, and first-run test-host/assertion correction |
+| defects found | 1 vulnerable transitive dependency, 1 compile type defect, 1 test-host configuration defect, 2 assertion defects, and 2 proactive persistence correctness defects; all corrected, with no known defect remaining |
 | rework | 4 targeted cycles: dependency advisory correction, compile-time role model correction, first-run test-host/assertion correction, and final-review evidence/wording correction |
 | defects found | 1 vulnerable transitive dependency, 1 compile type defect, 1 test-host configuration defect, 2 initial assertion defects, 2 proactive persistence correctness defects, 1 final-review evidence gap, and 1 record wording defect; all corrected, with no known product defect remaining |
+| correction cycle 5 (2026-07-23) | Restored append-only evidence and metric history, then corrected the documentation evidence overclaim without changing any product path. |
+| cumulative rework | 5 targeted cycles through final-review Attempt 2 record correction; changed-artifact path count remains 25 because cycle 5 changes only the existing canonical record. |
+| cumulative defects found | 11 total: the 9 previously recorded defects plus 1 append-only record-history defect and 1 documentation-evidence overclaim; both cycle 5 defects are corrected, with no known product defect remaining. |
 
 ## Closeout
 
