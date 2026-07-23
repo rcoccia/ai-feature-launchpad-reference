@@ -118,10 +118,10 @@ This records an attestation of the command; it does not authenticate identity.
 
 | Disposition | Record |
 |---|---|
-| delivered | Pending until the documentation branch is published and the fresh replay completes. |
+| delivered | Not closed: documentation publication and the fresh replay must complete first. |
 | remaining | Documentation publication, fresh replay, measured evidence, Phase 2 closure, and final review remain pending. |
-| discovered | Pending fresh replay observations; no discovery is claimed by documentation authoring alone. |
-| evidence | Pending the published branch, fresh replay report, and scope-preserving Roadmap/changelog evidence. |
+| discovered | No replay discovery is claimed by documentation authoring alone; fresh observations remain outstanding. |
+| evidence | No closeout evidence exists yet; it requires the published branch, replay report, and scope-preserving Roadmap/changelog record. |
 
 ## Independent final review
 
